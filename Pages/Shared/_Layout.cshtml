@@ -8,17 +8,16 @@
 </head>
 <body>
     <header>
-        Header
+        <a asp-page="/Index">Home</a>
+        <a asp-page="/Admin">Admin</a>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <main role="main">
+        @RenderBody()
+    </main>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - SuopCommerce - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2023 - SuopCommerce - <a asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
 
