@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace suopCommerce.Pages
+namespace SuopCommerce.Pages
 {
     public class IndexModel : PageModel
     {
@@ -14,6 +14,7 @@ namespace suopCommerce.Pages
 
         public void OnGet()
         {
+
         }
     }
 }
