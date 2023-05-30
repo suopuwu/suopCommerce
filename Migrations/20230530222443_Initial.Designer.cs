@@ -11,8 +11,8 @@ using suopCommerce.Models;
 namespace SuopCommerce.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20230525211826_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230530222443_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,11 +26,8 @@ namespace SuopCommerce.Migrations
 
             modelBuilder.Entity("suopCommerce.Models.Product", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<string>("CategoryId")
                         .IsRequired()

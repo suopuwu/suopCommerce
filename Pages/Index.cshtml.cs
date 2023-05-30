@@ -15,9 +15,10 @@ namespace SuopCommerce.Pages
 
         private StoreContext db { get; set; } = new();
         public int itemCount = 0;
-
+        public List<Product> products = new();
         public void OnGet()
         {
+            products = db.Products.ToList();
             itemCount = db.Products.Count();
         }
     }

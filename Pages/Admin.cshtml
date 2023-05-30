@@ -3,6 +3,36 @@
 @{
 }
 
-<div class="text-center">
-    <h1 class="display-4"> Admin page</h1>
-</div>
+<h1> Admin page</h1>
+<p>@ViewData["debug"]</p>
+<form class="form-horizontal" method="post">
+    <span class="text-input">
+        Id
+        <input type="text" name="Id" value="@Model.nextId" required/>
+    </span>
+    <span class="text-input">
+        Name
+        <input type="text" name="Name" required />
+    </span>
+    <span class="text-input">
+        Description
+        <input type="text" name="Description" required>
+    </span>
+    <span class="text-input">
+        Category Id
+        <input type="text" name="CategoryId"/>
+    </span>
+    <span class="text-input">
+        Price
+        <input type="number" name="Price" required />
+    </span>
+    <span class="text-input">
+        Tags
+        <input type="text" name="Tags"/>
+    </span>
+    <span class="text-input">
+        Images
+        <input type="file" name="Images" multiple="multiple" />
+    </span>
+    <button type="submit" class="btn btn-default">Register</button>
+</form>

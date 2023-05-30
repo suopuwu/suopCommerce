@@ -16,20 +16,28 @@ $fresh-link: #ff5555
 $used-link: #f78787
 $accent: #62ff07
 
+//Clear existing styles
 *
   padding: 0
   margin: 0
   box-sizing: border-box
+  border: none
+  background-color: transparent
+  font-size: inherit
+  &:focus
+    outline: none
 
 html
   min-width: 100%
   min-height: 100%
   font-family: sans-serif
 
+//Page layout
 body
   position: relative
   min-height: 100vh
   align-content: flex-start
+  font-size: 16px
   > *
     width: 100%
 
@@ -38,6 +46,9 @@ header
   background-color: black
   color: white
 main
+  display: flex
+  flex-flow: column
+  align-items: flex-start
   @media (orientation: landscape)
     padding: 0 20% 0 20%
 
@@ -48,11 +59,11 @@ footer
   background-color: black
   color: white
 
+//Misc styling
 a
   $height: 2px
   &::after
     transition: all 0.2s
-    background-color: $fresh-link
   &:link
     color: $fresh-link
     @include underline ($color: $fresh-link, $thickness: $height, $width: 100%, $yOffset: $height)
@@ -65,5 +76,30 @@ a
       background-color: $used-link
 
 h1
+  font-size: 2em
   font-weight: normal
   @include underline ($color: $accent, $thickness: 7px, $width: 110%, $yOffset: 5px)
+
+//form styling
+form
+  display: flex
+  flex-flow: column
+  > *
+    margin-bottom: 20px
+
+input[type=text], input[type=number]
+  border-bottom: 1px solid #aaa
+
+  &:focus
+    border-bottom: 1px solid #111
+
+button
+  background-color: $fresh-link
+  color: white
+  cursor: pointer
+  padding: 10px
+  border-radius: 5px
+
+.text-input
+  display: flex
+  flex-flow: column

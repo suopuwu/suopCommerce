@@ -24,14 +24,14 @@ namespace suopCommerce.Models
     }
     public class Product
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string CategoryId { get; set; }
+        public string? CategoryId { get; set; }
 
         public double Price { get; set; }
-        public string[] Images { get; set; }
-        public string[] Tags { get; set; }
+        public string[]? Images { get; set; }
+        public string[]? Tags { get; set; }
 
     }
 }

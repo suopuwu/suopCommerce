@@ -2,6 +2,12 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  border: none;
+  background-color: transparent;
+  font-size: inherit;
+}
+*:focus {
+  outline: none;
 }
 
 html {
@@ -14,6 +20,7 @@ body {
   position: relative;
   min-height: 100vh;
   align-content: flex-start;
+  font-size: 16px;
 }
 body > * {
   width: 100%;
@@ -25,6 +32,11 @@ header {
   color: white;
 }
 
+main {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+}
 @media (orientation: landscape) {
   main {
     padding: 0 20% 0 20%;
@@ -41,7 +53,6 @@ footer {
 
 a::after {
   transition: all 0.2s;
-  background-color: #ff5555;
 }
 a:link {
   color: #ff5555;
@@ -69,6 +80,7 @@ a:hover::after {
 }
 
 h1 {
+  font-size: 2em;
   font-weight: normal;
   display: inline-block;
   position: relative;
@@ -83,4 +95,32 @@ h1::after {
   right: -5%;
   bottom: -2px;
   z-index: -1;
+}
+
+form {
+  display: flex;
+  flex-flow: column;
+}
+form > * {
+  margin-bottom: 20px;
+}
+
+input[type=text], input[type=number] {
+  border-bottom: 1px solid #aaa;
+}
+input[type=text]:focus, input[type=number]:focus {
+  border-bottom: 1px solid #111;
+}
+
+button {
+  background-color: #ff5555;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.text-input {
+  display: flex;
+  flex-flow: column;
 }/*# sourceMappingURL=style.css.map */

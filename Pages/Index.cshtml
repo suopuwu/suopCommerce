@@ -5,5 +5,14 @@
 }
 
 <div class="text-center">
-    <h1>@Model.itemCount</h1>
+    <h1>@Model.itemCount products</h1>
+    @foreach (var product in Model.products)
+    {
+    <div style="padding-bottom: 30px">
+        <p>@product.Name</p>
+        <p>@product.Description</p>
+        <p>@product.Price</p>
+    </div>
+
+    }
 </div>
