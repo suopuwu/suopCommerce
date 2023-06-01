@@ -8,6 +8,7 @@ namespace suopCommerce.Models
     public class StoreContext : DbContext
     {
         public DbSet<Product> Products { get; set;}
+        public DbSet<Image> Images { get; set;}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,5 +34,11 @@ namespace suopCommerce.Models
         public string[]? Images { get; set; }
         public string[]? Tags { get; set; }
 
+    }
+    public class Image
+    {
+        public string Id { get; set; }
+        public string url { get; set; }
+        public string? desctiption { get; set; }
     }
 }
