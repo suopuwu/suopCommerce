@@ -11,12 +11,12 @@
         <input type="text" name="Id" value="@Model.nextId" required/>
     </span>
     <span class="text-input">
-        Name
-        <input type="text" name="Name" required />
+        
+        <input type="text" name="Name" value="temp" required />
     </span>
     <span class="text-input">
         Description
-        <input type="text" name="Description" required>
+        <input type="text" name="Description" value="temp" required>
     </span>
     <span class="text-input">
         Category Id
@@ -24,7 +24,7 @@
     </span>
     <span class="text-input">
         Price
-        <input type="number" name="Price" required />
+        <input type="number" name="Price" value="0" required />
     </span>
     <span class="text-input">
         Tags
@@ -32,7 +32,8 @@
     </span>
     <span class="text-input">
         Images
-        <input type="file" name="Images" multiple="multiple" />
+        <input type="file" name="Images" multiple="multiple" accept=".png, .jpg, .jpeg, .webp"/>
+        <i class="warning">Note: make sure only trusted users have access to this page, as uploads are not validated beyond extension.</i>
     </span>
     <button type="submit" class="btn btn-default">Register</button>
 </form>

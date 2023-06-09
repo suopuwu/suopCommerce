@@ -79,6 +79,14 @@ a:hover::after {
   background-color: #f78787;
 }
 
+i {
+  font-style: normal;
+}
+
+.warning {
+  color: #ff453f;
+}
+
 h1 {
   font-size: 2em;
   font-weight: normal;
