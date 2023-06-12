@@ -51,17 +51,15 @@ footer {
   color: white;
 }
 
-a::after {
-  transition: all 0.2s;
-}
-a:link {
+a {
   color: #ff5555;
   display: inline-block;
   position: relative;
   z-index: 1;
 }
-a:link::after {
+a::after {
   content: "";
+  transition: all 0.2s;
   width: 100%;
   padding-bottom: 2px;
   background-color: #ff5555;
@@ -73,14 +71,29 @@ a:link::after {
 a:visited {
   color: #ff5555;
 }
+a:hover {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+}
 a:hover::after {
-  right: -5%;
-  width: 110%;
+  content: "";
+  transition: all 0.2s;
+  width: 100%;
+  padding-bottom: 2px;
   background-color: #f78787;
+  position: absolute;
+  right: 0%;
+  bottom: 0px;
+  z-index: -1;
 }
 
 i {
   font-style: normal;
+}
+
+.text-center {
+  width: 100%;
 }
 
 .warning {
@@ -96,6 +109,7 @@ h1 {
 }
 h1::after {
   content: "";
+  transition: all 0.2s;
   width: 110%;
   padding-bottom: 7px;
   background-color: #62ff07;
@@ -131,4 +145,52 @@ button {
 .text-input {
   display: flex;
   flex-flow: column;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 200px);
+  justify-content: space-between;
+}
+
+.product-grid-item {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+}
+.product-grid-item::after {
+  content: "";
+  transition: all 0.2s;
+  width: 80%;
+  padding-bottom: 5px;
+  background-color: #ff5555;
+  position: absolute;
+  right: 10%;
+  bottom: -5px;
+  z-index: -1;
+}
+.product-grid-item:hover {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+}
+.product-grid-item:hover::after {
+  content: "";
+  transition: all 0.2s;
+  width: 110%;
+  padding-bottom: 5px;
+  background-color: #ff5555;
+  position: absolute;
+  right: -5%;
+  bottom: -5px;
+  z-index: -1;
+}
+@media (orientation: landscape) {
+  .product-grid-item {
+    margin: 10px;
+  }
+}
+.product-grid-item > img {
+  width: 100%;
 }/*# sourceMappingURL=style.css.map */

@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace SuopCommerce.Pages
+namespace SuopCommerce.Pages.Admin
 {
     public class AdminModel : PageModel
     {
@@ -41,7 +41,7 @@ namespace SuopCommerce.Pages
 
 
             //todo move database code out of this file
-            
+
             try
             {
                 var blobs = await FileUpload.ImageAsync(Request.Form.Files);
@@ -49,6 +49,7 @@ namespace SuopCommerce.Pages
                 ViewData["debug"] = JsonSerializer.Serialize(product);
 
                 db.SaveChanges();
+                //todo make the debug string display when delayed due to the upload time on an image.
 
             }
             catch (Exception ex)

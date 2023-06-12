@@ -1,9 +1,10 @@
-@mixin underline ($color, $thickness, $width, $yOffset)
+@mixin underline ($color: $fresh-link, $thickness: 2px, $width: 100%, $yOffset: 0)
   display: inline-block
   position: relative
   z-index: 1
   &::after
     content: ""
+    transition: all 0.2s
     width: $width
     padding-bottom: $thickness
     background-color: $color
@@ -15,7 +16,7 @@
 $fresh-link: #ff5555
 $used-link: #f78787
 $accent: #62ff07
-
+$base-padding: 10px
 //Clear existing styles
 *
   padding: 0
@@ -62,21 +63,18 @@ footer
 //Misc styling
 a
   $height: 2px
-  &::after
-    transition: all 0.2s
-  &:link
-    color: $fresh-link
-    @include underline ($color: $fresh-link, $thickness: $height, $width: 100%, $yOffset: $height)
+  color: $fresh-link
+  @include underline ($yOffset: $height)
   &:visited
     color: $fresh-link
   &:hover
-    &::after
-      right: -5%
-      width: 110%
-      background-color: $used-link
+    @include underline ($used-link, $height, 100%, $height)
+
 i
   font-style: normal
 
+.text-center
+  width: 100%
 //Special text formatting
 $warning-color: #ff453f
 .warning
@@ -110,3 +108,19 @@ button
 .text-input
   display: flex
   flex-flow: column
+
+//product styling
+$product-width: 200px
+.product-grid
+  display: grid
+  grid-template-columns: repeat(auto-fill, $product-width)
+  justify-content: space-between
+.product-grid-item
+  cursor: pointer
+  @include underline ($fresh-link, 5px, 80%)
+  &:hover
+    @include underline ($fresh-link, 5px, 110%)
+  @media (orientation: landscape)
+    margin: $base-padding
+  > img
+    width: 100%
