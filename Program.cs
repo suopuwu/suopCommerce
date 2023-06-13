@@ -1,3 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using SuopCommerce.Pages;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,9 +23,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+//app.MapGet("products/{productId}", (string productId) =>
+//{
+//    return new { productId };
+//}); api functions
+//app.MapGet("products/{productId}", (string productId) => );
 
 app.UseAuthorization();
-
 app.MapRazorPages();
 
 app.Run();
