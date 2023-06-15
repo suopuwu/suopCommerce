@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SuopCommerce.Pages;
+using SuopCommerce.Utils.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +30,7 @@ app.UseRouting();
 //    return new { productId };
 //}); api functions
 //app.MapGet("products/{productId}", (string productId) => );
-
+app.MapDelete("/products/{id}", DeleteProduct.Delete);
 app.UseAuthorization();
 app.MapRazorPages();
 

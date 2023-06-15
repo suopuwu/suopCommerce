@@ -1,9 +1,8 @@
-﻿@page
+﻿@page "/admin"
 @model AdminModel
 @{
 }
-
-<h1> Admin page</h1>
+<h1>Add product</h1>
 <p>@ViewData["debug"]</p>
 <form enctype="multipart/form-data" method="post">
     <span class="text-input">
@@ -37,3 +36,20 @@
     </span>
     <button type="submit" class="btn btn-default">Register</button>
 </form>
+<div class="product-list">
+    @foreach (var product in Model.products)
+    {
+        <div class="product-list-item" >
+            @foreach (var image in product.Images)
+            {
+                <img src="@image">
+            }
+
+            <p>@product.Name</p>
+            <p>@product.Description</p>
+            <p>@product.Price</p>
+            <span class="spacer"></span>todo move the js into another file.
+            <button class="product-delete-item" onclick="fetch('https://localhost:7072/products/@product.Id', {method: 'DELETE' }).then((data)=> data.text()).then((data) => console.log(data));">✖️</button>
+        </div>
+    }
+</div>

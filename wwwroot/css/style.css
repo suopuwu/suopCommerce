@@ -39,7 +39,7 @@ main {
 }
 @media (orientation: landscape) {
   main {
-    padding: 0 20% 0 20%;
+    padding: 0 20% calc(1em + 120px) 20%;
   }
 }
 
@@ -193,4 +193,31 @@ button {
 }
 .product-grid-item > img {
   width: 100%;
+}
+
+.product-list {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+}
+
+.product-list-item {
+  outline: grey 1px solid;
+  margin: 1em 0 0 0;
+  display: inline-flex;
+  flex-flow: row nowrap;
+  cursor: pointer;
+}
+.product-list-item > .spacer {
+  flex-grow: 1;
+}
+.product-list-item > * {
+  padding: 5px;
+}
+.product-list-item > img {
+  padding: 0;
+  height: 4em;
+}
+.product-list-item > button {
+  border-radius: 0;
 }/*# sourceMappingURL=style.css.map */

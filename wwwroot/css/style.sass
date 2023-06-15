@@ -51,7 +51,7 @@ main
   flex-flow: column
   align-items: flex-start
   @media (orientation: landscape)
-    padding: 0 20% 0 20%
+    padding: 0 20% calc(1em + 120px) 20%//1em + 120px to have spacing for the footer.
 
 footer
   position: absolute
@@ -124,3 +124,24 @@ $product-width: 200px
     margin: $base-padding
   > img
     width: 100%
+
+.product-list
+  display: flex
+  flex-flow: column
+  width: 100%
+.product-list-item
+  outline: grey 1px solid
+  margin: 1em 0 0 0
+
+  display: inline-flex
+  flex-flow: row nowrap
+  cursor: pointer
+  > .spacer
+    flex-grow: 1
+  > *
+    padding: 5px
+  > img
+    padding: 0
+    height: 4em
+  > button
+    border-radius: 0

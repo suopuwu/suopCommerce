@@ -3,35 +3,40 @@ using Azure.Storage.Blobs;
 using suopCommerce.Models;
 using System.ComponentModel;
 
-namespace SuopCommerce.Utils
+namespace SuopCommerce.Utils.Data
 {
-    public static class FileUpload
+    public static class BlobHandler
     {
         public const string baseBlobUrl = "https://suopstorageone.blob.core.windows.net";
+        public static StoreContext db;
+        public static BlobServiceClient blobServiceClient;
 
-        public static async Task<List<string>> ImageAsync(IFormFileCollection files)
+        static BlobHandler()
         {
-        StoreContext db = new();
-        string containerName = "images";
-            List<string> blobs = new();
-            //connect to azure
-            var blobServiceClient = new BlobServiceClient(
+            db = new();
+            blobServiceClient = new BlobServiceClient(
                 new Uri(baseBlobUrl),
                 new DefaultAzureCredential());
-            if(blobServiceClient is null)
+            if (blobServiceClient is null)
             {
                 throw new ArgumentNullException(nameof(blobServiceClient));
             }
 
+        }
+        public static async Task<List<string>> UploadImageAsync(IFormFileCollection files)
+        {
+            string containerName = "images";
+            List<string> blobs = new();
+            //connect to azure
 
-            
+
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-                if(!validateExtension(extension))
+                if (!validateImageExtension(extension))
                 {
                     break;
                 }
@@ -43,7 +48,7 @@ namespace SuopCommerce.Utils
                 {
                     await file.CopyToAsync(ms);
                     ms.Seek(0, SeekOrigin.Begin);
-                    
+
                     await blobClient.UploadAsync(ms);
                     blobs.Add(blobUrl);
                 }
@@ -55,16 +60,40 @@ namespace SuopCommerce.Utils
             return blobs;
         }
 
+        public static async Task<string> DeleteImageAsync(string url)
+        {
+            string containerName = "images";
+            string blobName = url.Split('/').Last();
 
-        private static bool validateExtension(string extension) {
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+            if (await containerClient.DeleteBlobIfExistsAsync(blobName))
+            {
+                Image? imageToDelete = db.Images.Find(url);
+                if (imageToDelete == null)
+                {
+                    return "failed to delete, no such image at url " + url;
+                }
+
+                db.Images.Remove(imageToDelete);
+                db.SaveChanges();
+
+            }
+            return "deleted the image at url " + url;
+        }
+
+
+        private static bool validateImageExtension(string extension)
+        {
             string[] permittedExtensions = { ".png", ".jpg", ".jpeg", ".webp" };
             if (permittedExtensions.Contains(extension))
             {
                 return true;
-            } else
+            }
+            else
             {
                 return false;
             }
+        }
     }
-}
 }
