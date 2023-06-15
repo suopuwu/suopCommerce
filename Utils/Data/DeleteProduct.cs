@@ -7,12 +7,12 @@ namespace SuopCommerce.Utils.Data
         public static async Task<string> Delete(string id)
         {
             StoreContext db = new();
-            Product productToDelete = db.Products.Find(id);
+            Product? productToDelete = db.Products.Find(id);
             if (productToDelete == null)
             {
-                return $"No product with id {id} to delete.";
+                return "failed";
             }
-
+            
             if (productToDelete.Images != null)
             {
                 foreach (string imageUrl in productToDelete.Images)
@@ -24,7 +24,7 @@ namespace SuopCommerce.Utils.Data
 
             db.Products.Remove(productToDelete);
             db.SaveChanges();
-            return $"Product with id {id} deleted.";
+            return $"deleted";
         }
     }
 }

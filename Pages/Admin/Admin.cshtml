@@ -39,7 +39,7 @@
 <div class="product-list">
     @foreach (var product in Model.products)
     {
-        <div class="product-list-item" >
+        <div class="product-list-item" id="@product.Id">
             @foreach (var image in product.Images)
             {
                 <img src="@image">
@@ -49,7 +49,7 @@
             <p>@product.Description</p>
             <p>@product.Price</p>
             <span class="spacer"></span>todo move the js into another file.
-            <button class="product-delete-item" onclick="fetch('https://localhost:7072/products/@product.Id', {method: 'DELETE' }).then((data)=> data.text()).then((data) => console.log(data));">✖️</button>
+            <button class="product-delete-item" onclick="deleteProduct('@product.Id')">✖️</button>
         </div>
     }
 </div>
