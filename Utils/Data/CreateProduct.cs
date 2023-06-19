@@ -18,7 +18,7 @@ namespace SuopCommerce.Utils.Data
             product.Price = price;
             product.Tags = tags;
             //todo add tags, images, addons, category, just make sure that all fields are editable.
-
+            //todo make it remove metadata
 
             try
             {
@@ -27,7 +27,7 @@ namespace SuopCommerce.Utils.Data
                 db.Products.Add(product);
 
                 db.SaveChanges();
-                return JsonSerializer.Serialize(product);
+                return "success";
 
                 //todo make the debug string display when delayed due to the upload time on an image.
 

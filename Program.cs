@@ -1,10 +1,13 @@
+using Azure.Core;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 using SuopCommerce.Pages;
 using SuopCommerce.Utils.Data;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +34,17 @@ app.UseRouting();
 //}); api functions
 //app.MapGet("products/{productId}", (string productId) => );
 app.MapDelete("/products/{id}", DeleteProduct.Delete);
+app.MapPost("/products", async (HttpContext context) =>
+{
+    return await CreateProduct.Create(
+                    context.Request.Form["Id"]!,
+                    context.Request.Form["Name"]!,
+                    context.Request.Form["Description"]!,
+                    context.Request.Form["CategoryId"]!,
+                    double.Parse(context.Request.Form["Price"]!),
+                    context.Request.Form["Tags"]!,
+                    context.Request.Form.Files);
+});
 app.UseAuthorization();
 app.MapRazorPages();
 

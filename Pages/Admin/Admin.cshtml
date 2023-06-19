@@ -2,41 +2,13 @@
 @model AdminModel
 @{
 }
-<h1>Add product</h1>
 <p>@ViewData["debug"]</p>
-<form enctype="multipart/form-data" method="post">
-    <span class="text-input">
-        Id
-        <input type="text" name="Id" value="@Model.nextId" required/>
-    </span>
-    <span class="text-input">
-        
-        <input type="text" name="Name" value="temp" required />
-    </span>
-    <span class="text-input">
-        Description
-        <input type="text" name="Description" value="temp" required>
-    </span>
-    <span class="text-input">
-        Category Id
-        <input type="text" name="CategoryId"/>
-    </span>
-    <span class="text-input">
-        Price
-        <input type="number" name="Price" value="0" required />
-    </span>
-    <span class="text-input">
-        Tags
-        <input type="text" name="Tags"/>
-    </span>
-    <span class="text-input">
-        Images
-        <input type="file" name="Images" multiple="multiple" accept=".png, .jpg, .jpeg, .webp"/>
-        <i class="warning">Note: make sure only trusted users have access to this page, as uploads are not validated beyond extension.</i>
-    </span>
-    <button type="submit" class="btn btn-default">Register</button>
-</form>
 <div class="product-list">
+    <h1>Products</h1>
+    <div>
+        <button onclick="createProductForm()">Add product</button>
+    </div>
+
     @foreach (var product in Model.products)
     {
         <div class="product-list-item" id="@product.Id">
@@ -48,8 +20,9 @@
             <p>@product.Name</p>
             <p>@product.Description</p>
             <p>@product.Price</p>
-            <span class="spacer"></span>todo move the js into another file.
+            <span class="spacer"></span>
             <button class="product-delete-item" onclick="deleteProduct('@product.Id')">✖️</button>
         </div>
     }
 </div>
+<script src="/js/admin.js" defer></script>
