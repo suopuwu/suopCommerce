@@ -2,9 +2,10 @@
 @model AdminModel
 @{
 }
+<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 <p>@ViewData["debug"]</p>
 <div class="product-list">
-    <h1>Products</h1>
+    <div><h1>Products</h1></div>
     <div>
         <button onclick="createProductForm()">Add product</button>
     </div>
@@ -18,11 +19,11 @@
             }
 
             <p>@product.Name</p>
-            <p>@product.Description</p>
             <p>@product.Price</p>
             <span class="spacer"></span>
+            <button class="product-edit-item" onclick="editProductForm('@product.Id', `@product.Name`, `@product.Description`, `@product.CategoryId`, `@product.Price`, `@product.Tags`)">📝</button>
             <button class="product-delete-item" onclick="deleteProduct('@product.Id')">✖️</button>
         </div>
     }
 </div>
-<script src="/js/admin.js" defer></script>
+<script src="/js/admin.js" asp-append-version="true" defer></script>

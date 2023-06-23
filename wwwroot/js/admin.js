@@ -6,14 +6,17 @@ function removeElement(id) {
     document.getElementById(id).remove()
 }
 function deleteProduct(productId) {
-    fetch(`${window.location.origin}/products/${productId}`,
-        { method: 'DELETE' })
-        .then((data) => data.text())
-        .then((data) => {
-            if (data == 'deleted') {
-                removeElement(productId)
-            }
-        })
+    confirmAction('Are you sure you want to delete this product? This cannot be undone.', () => {
+        fetch(`${window.location.origin}/api/products/${productId}`,
+            { method: 'DELETE' })
+            .then((data) => data.text())
+            .then((data) => {
+                if (data == 'deleted') {
+                    removeElement(productId)
+                }
+            })
+
+    })
 }
 function createProductForm() {
     var createProductPopup = new SuopPopup(`
@@ -27,14 +30,14 @@ function createProductForm() {
         </style>
 
         <form enctype="multipart/form-data" method="post" class="create-product-form">
-            <h1>Add product</h1>
+            <div><h1>Add product</h1></div>
 
             <span class="text-input">
                 Id
                 <input type="text" name="Id" value="${crypto.randomUUID()}" required/>
             </span>
             <span class="text-input">
-        
+                Name
                 <input type="text" name="Name" value="temp" required />
             </span>
             <span class="text-input">
@@ -63,7 +66,7 @@ function createProductForm() {
     `)
 
     const form = document.querySelector('.create-product-form')
-    const submitUrl = window.location.origin + '/products' // Define the URL here
+    const submitUrl = window.location.origin + '/api/products'
 
     form.addEventListener('submit', e => {
         e.preventDefault() // Prevent the form from submitting normally
@@ -80,7 +83,7 @@ function createProductForm() {
                 if (data == 'success') {
 
                     uploadIndicator.text = 'Successfully added new product. Refresh to see changes.'
-                    uploadIndicator.setAction(new SuopSnackbarAction('refresh', () => window.location = window.location))
+                    uploadIndicator.setAction(new SuopSnackbarAction('Refresh', () => window.location = window.location))
                 } else {
                     uploadIndicator.text = 'Error: ' + data
                 }
@@ -94,4 +97,81 @@ function createProductForm() {
     })
 
     createProductPopup.showPopup()
+}
+
+function editProductForm(id, name, description, categoryId, price, tags) {
+    var editProductPopup = new SuopPopup(`
+        <style>
+            .update-product-form {
+                padding: 10px;
+                border-radius: 10px;
+                background-color: white;
+                width: 700px;
+            }
+            
+        </style>
+
+        <form enctype="multipart/form-data" method="post" class="update-product-form">
+            <div><h1>Edit product</h1></div>
+
+            <span class="text-input">
+                Id
+                <input type="text" name="Id" value="${id}" required/>
+            </span>
+            <span class="text-input">
+                Name
+                <input type="text" name="Name" value="${name}" required />
+            </span>
+            <span class="text-input">
+                Description
+                <input type="text" name="Description" value="${description}" required>
+            </span>
+            <span class="text-input">
+                Category Id
+                <input type="text" name="CategoryId" value="${categoryId ?? ''}"/>
+            </span>
+            <span class="text-input">
+                Price
+                <input type="number" name="Price" value="${price}" required/>
+            </span>
+            <span class="text-input">
+                Tags
+                <input type="text" name="Tags" value="${tags}"/>
+            </span>
+            <button type="submit" class="btn btn-default">Save Changes</button>
+        </form>
+    `)
+
+    const form = document.querySelector('.update-product-form')
+    const submitUrl = window.location.origin + '/api/products/' + id
+
+    form.addEventListener('submit', e => {//todo refactor to reduce reusage of code
+        e.preventDefault()
+
+        const formData = new FormData(form);
+        var uploadIndicator = suopSnackbar.add('updating product...', Infinity)
+
+        fetch(submitUrl, {
+            method: form.method,
+            body: formData
+        })
+            .then(response => response.text())
+            .then(data => {
+                if (data == 'success') {
+
+                    uploadIndicator.text = 'Successfully updated product. Refresh to see changes.'
+                    uploadIndicator.setAction(new SuopSnackbarAction('Refresh', () => window.location = window.location))
+                } else {
+                    uploadIndicator.text = 'Error: ' + data
+                }
+
+                })
+            .catch(error => {
+                uploadIndicator.text = 'Error: ' + error
+            })
+        editProductPopup.hideThenDelete()
+
+    })
+
+    editProductPopup.showPopup()
 }

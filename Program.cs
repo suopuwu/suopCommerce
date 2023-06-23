@@ -33,10 +33,10 @@ app.UseRouting();
 //    return new { productId };
 //}); api functions
 //app.MapGet("products/{productId}", (string productId) => );
-app.MapDelete("/products/{id}", DeleteProduct.Delete);
-app.MapPost("/products", async (HttpContext context) =>
+app.MapDelete("/api/products/{id}", ProductDao.Delete);
+app.MapPost("/api/products", async (HttpContext context) =>
 {
-    return await CreateProduct.Create(
+    return await ProductDao.Create(
                     context.Request.Form["Id"]!,
                     context.Request.Form["Name"]!,
                     context.Request.Form["Description"]!,
@@ -44,6 +44,17 @@ app.MapPost("/products", async (HttpContext context) =>
                     double.Parse(context.Request.Form["Price"]!),
                     context.Request.Form["Tags"]!,
                     context.Request.Form.Files);
+});
+app.MapGet("/api/products/{id}", ProductDao.Get);
+app.MapPost("/api/products/{id}", async (HttpContext context, string id) =>
+{
+    return await ProductDao.Update(
+                    id,
+                    context.Request.Form["Name"]!,
+                    context.Request.Form["Description"]!,
+                    context.Request.Form["CategoryId"]!,
+                    double.Parse(context.Request.Form["Price"]!),
+                    context.Request.Form["Tags"]!);
 });
 app.UseAuthorization();
 app.MapRazorPages();

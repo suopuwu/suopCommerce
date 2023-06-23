@@ -2,4 +2,12 @@
 @model ProductModel
 @{
 }
-<div>Test. The ID of the current product is @Model.product.Id</div>
+<link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
+
+<h1>@Model.product.Name</h1>
+@foreach (var image in Model.product.Images)
+{
+    <img src="@image">
+}
+<p>@Model.product.Description</p>
+<button onclick="suopCart.add(new CartItem('@Model.product.Id', 1))">Buy now</button>

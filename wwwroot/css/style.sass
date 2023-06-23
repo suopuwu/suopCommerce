@@ -39,17 +39,23 @@ body
   min-height: 100vh
   align-content: flex-start
   font-size: 16px
-  > *
-    width: 100%
 
 header
   padding: 50px
   background-color: black
   color: white
+  display: flex
+  align-items: center
+  width: 100%
+
+  > .spacer
+    flex-grow: 1
 main
   display: flex
   flex-flow: column
   align-items: flex-start
+  width: 100%
+
   @media (orientation: landscape)
     padding: 0 20% calc(1em + 120px) 20%//1em + 120px to have spacing for the footer.
 
@@ -59,9 +65,15 @@ footer
   padding: 10px
   background-color: black
   color: white
+  width: 100%
 
 //Misc styling
-a
+
+a.no-underline
+  color: inherit
+  text-decoration: none
+
+a:not(.no-underline)
   $height: 2px
   color: $fresh-link
   @include underline ($yOffset: $height)
@@ -75,6 +87,19 @@ i
 
 .text-center
   width: 100%
+
+#header-cart-button
+  cursor: pointer
+
+#header-cart-button-image
+  filter: invert(1)
+  cursor: pointer
+
+.shopping-popup-item
+  display: block
+  >img
+    max-height: 3em
+
 //Special text formatting
 $warning-color: #ff453f
 .warning

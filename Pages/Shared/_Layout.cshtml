@@ -5,11 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SuopCommerce</title>
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+
+    <script src="~/lib/suopSnackbar.js" defer></script>
+    <script src="~/lib/suopPopup.js" defer></script>
+    <script src="~/lib/jsCookie.js" defer></script>
+    <script src="~/js/main.js" defer asp-append-version="true"></script>
+    <script src="~/js/cart.js" defer asp-append-version="true"></script>
 </head>
 <body>
     <header>
         <a asp-page="/Index">Home</a>
         <a href="/admin">Admin</a>
+        <span class="spacer"></span>
+        <a class="no-underline cart-hover-target" href="/checkout"><span class="cart-product-number"></span><img id="header-cart-button-image" src="/img/cart.svg" alt="" /></a>
     </header>
     <main role="main">
         @RenderBody()
@@ -21,9 +29,6 @@
         </div>
     </footer>
 
-    <script src="~/js/main.js" asp-append-version="true"></script>
-    <script src="~/lib/suopSnackbar.js"></script>
-    <script src="~/lib/suopPopup.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
