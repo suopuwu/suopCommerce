@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using Stripe;
 using SuopCommerce.Pages;
+using SuopCommerce.Utils;
 using SuopCommerce.Utils.Data;
 using System.Text;
 
@@ -28,11 +30,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-//app.MapGet("products/{productId}", (string productId) =>
-//{
-//    return new { productId };
-//}); api functions
-//app.MapGet("products/{productId}", (string productId) => );
+
+StripeConfiguration.ApiKey = "sk_test_51NMGmDHGAiSJzSGYXfof3JxlLvX0oWg8Hh6I23NzCnLiUSEgRby5Lr23ZIuv9wZOUnwOzEsINXfdV73euSefLink00StTj2tFH";
 app.MapDelete("/api/products/{id}", ProductDao.Delete);
 app.MapPost("/api/products", async (HttpContext context) =>
 {
@@ -56,6 +55,8 @@ app.MapPost("/api/products/{id}", async (HttpContext context, string id) =>
                     double.Parse(context.Request.Form["Price"]!),
                     context.Request.Form["Tags"]!);
 });
+
+app.MapPost("/create-payment-intent", PaymentIntentApiController.Create);
 app.UseAuthorization();
 app.MapRazorPages();
 

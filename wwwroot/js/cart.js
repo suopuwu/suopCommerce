@@ -57,6 +57,7 @@ class Cart {
                 
             }
         }
+
         document.querySelectorAll('.cart-hover-target').forEach((node) => {
             node.addEventListener('mouseenter', () => {
                 if (!node.suopCartShown) {
