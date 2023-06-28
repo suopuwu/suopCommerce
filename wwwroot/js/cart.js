@@ -1,31 +1,34 @@
 class Cart {
-    constructor() {
+    #validateCartItemsAndRender() {
+        let items = this.items
+        let invalidIds = new Set()
+        let itemCount = items.length
+        let validatedItems = 0
+        for (let item of items) {
+            getProduct(item.id).then((itemInfo) => {
+                validatedItems++
+                if (itemInfo.Name == null) {
+                    invalidIds.add(item.id)
+                }
+                if (validatedItems == itemCount) {
+                    for (let id of invalidIds) {
+                        this.items = items.filter(filterItem => (filterItem.id != id))
+                    }
+                    this.#save()
+                    this.#updateCartNumbers()
+                }
+            })
 
-
-        this.items = retrieveCookie('cart') ?? []
-        
-
-        this.updateCartNumbers()
-        this.setHoverCarts()
+        }
     }
 
-    save() {
-        storeCookie('cart', this.items)
-    }
-
-    updateCartNumbers() {
-        document.querySelectorAll('.cart-product-number').forEach((node) => {
-            node.innerHTML = this.items.length
-        })
-    }
-
-    setHoverCarts() {
+    #setHoverCarts() {
         function showHoverCart(node) {
             node.suopCartShown = true
             //create the cart
-            var hoverCart = new SuopPopup('', {
+            let hoverCart = new SuopPopup('', {
                 floating: true, background: 'white',
-                x: node.offsetLeft + node.offsetWidth, y: node.offsetTop + node.offsetHeight
+                x: node.offsetLeft + node.offsetWidth, y: node.offsetTop
             })
             //add items to the cart
             fillHoverCart(hoverCart)
@@ -38,24 +41,30 @@ class Cart {
             hoverCart.toggle()
         }
         function fillHoverCart(popup) {
+            let contentContainer = popup.node.querySelector('.suop-popup-content')
+            if (contentContainer == null) return;
             for (let item of window.suopCart.items) {
+                let itemNode = document.createElement('span')
+                itemNode.classList.add('shopping-popup-item')
+                contentContainer.append(itemNode)
                 getProduct(item.id).then((itemInfo) => {
-                    console.log(itemInfo)
-                    popup.content += `
-                    <span class="shopping-popup-item">
+                    itemNode.innerHTML = `
                         ${(() => {
-                        var html = ''
-                        for (let image of itemInfo.Images) {
-                            html += `<img src="${image}">`
-                        }
-                        return html
+                            let html = ''
+                            for (let image of itemInfo.Images) {
+                                html += `<img src="${image}">`
+                            }
+                            return html
                         })()}
                         ${itemInfo.Name}
-                    </span>
-                `
+                    `
                 })
-                
+
             }
+            let checkoutButton = document.createElement('button')
+            contentContainer.append(checkoutButton)
+            checkoutButton.outerHTML = '<button id="checkout-button" onclick="window.suopCart.submitCart()">Checkout</button>'
+            //todo make the back button take you to whatever prior page.
         }
 
         document.querySelectorAll('.cart-hover-target').forEach((node) => {
@@ -68,10 +77,55 @@ class Cart {
         })
     }
 
+    #save() {
+        storeCookie('cart', this.items)
+    }
+
+    #updateCartNumbers() {
+        document.querySelectorAll('.cart-product-number').forEach((node) => {
+            node.innerHTML = this.items.length
+        })
+    }
+
+    items
+    constructor() {
+        try {
+            this.items = retrieveCookie('cart') ?? []
+        } catch {
+            this.items = []
+            this.#save()
+        }
+        this.#validateCartItemsAndRender()
+        this.#setHoverCarts()
+    }
+
+    clear() {
+        this.items = []
+        this.#updateCartNumbers()
+        this.#save()
+    }
+
     add(cartItem) {
         this.items.push(cartItem)
-        this.updateCartNumbers()
-        this.save()
+        this.#updateCartNumbers()
+        this.#save()
+    }
+
+    submitCart() {
+        let stripeLoading = SuopSnack.add('Bringing you to stripe...', Infinity, null, true)
+        fetch(window.location.origin + '/api/checkout', {
+            method: 'post',
+            body: JSON.stringify(this.items)
+        })
+        .then(response => response.text())
+        .then(data => {
+
+            window.location = JSON.parse(data)['Location']
+        })
+            .catch(error => {
+                stripeLoading.text = '<i style="color:red">Error:</i> ' + error
+            console.log(error)
+        })
     }
 }
 

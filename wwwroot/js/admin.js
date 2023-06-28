@@ -50,7 +50,7 @@ function createProductForm() {
             </span>
             <span class="text-input">
                 Price
-                <input type="number" name="Price" value="0" required />
+                <input type="number" name="Price" value="0.5" step="0.01" min="0.5" max="99999999"  required />
             </span>
             <span class="text-input">
                 Tags
@@ -72,7 +72,7 @@ function createProductForm() {
         e.preventDefault() // Prevent the form from submitting normally
 
         const formData = new FormData(form); // Get the form data
-        var uploadIndicator = suopSnackbar.add('Uploading product...', Infinity)
+        var uploadIndicator = SuopSnack.add('Uploading product...', Infinity)
 
         fetch(submitUrl, { // Use the defined URL
             method: form.method,
@@ -83,7 +83,7 @@ function createProductForm() {
                 if (data == 'success') {
 
                     uploadIndicator.text = 'Successfully added new product. Refresh to see changes.'
-                    uploadIndicator.setAction(new SuopSnackbarAction('Refresh', () => window.location = window.location))
+                    uploadIndicator.setAction(new SuopSnack.Action('Refresh', () => window.location = window.location))
                 } else {
                     uploadIndicator.text = 'Error: ' + data
                 }
@@ -132,7 +132,7 @@ function editProductForm(id, name, description, categoryId, price, tags) {
             </span>
             <span class="text-input">
                 Price
-                <input type="number" name="Price" value="${price}" required/>
+                <input type="number" name="Price" value="${price}" step="0.01" min="0.5" max="99999999"  required />
             </span>
             <span class="text-input">
                 Tags
@@ -149,7 +149,7 @@ function editProductForm(id, name, description, categoryId, price, tags) {
         e.preventDefault()
 
         const formData = new FormData(form);
-        var uploadIndicator = suopSnackbar.add('updating product...', Infinity)
+        var uploadIndicator = SuopSnack.add('updating product...', Infinity)
 
         fetch(submitUrl, {
             method: form.method,
@@ -160,7 +160,7 @@ function editProductForm(id, name, description, categoryId, price, tags) {
                 if (data == 'success') {
 
                     uploadIndicator.text = 'Successfully updated product. Refresh to see changes.'
-                    uploadIndicator.setAction(new SuopSnackbarAction('Refresh', () => window.location = window.location))
+                    uploadIndicator.setAction(new SuopSnackbar.Action('Refresh', () => window.location = window.location))
                 } else {
                     uploadIndicator.text = 'Error: ' + data
                 }

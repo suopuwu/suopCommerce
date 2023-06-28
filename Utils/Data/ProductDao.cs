@@ -6,7 +6,7 @@ namespace SuopCommerce.Utils.Data
 {
     public static class ProductDao
     {
-        public static async Task<String> Create(string id, string name, string description, string categoryId, double price, string[] tags, IFormFileCollection images)
+        public static async Task<string> Create(string id, string name, string description, string categoryId, double price, string[] tags, IFormFileCollection images)
         {
             StoreContext db = new();
 
@@ -57,7 +57,7 @@ namespace SuopCommerce.Utils.Data
 
             db.Products.Remove(productToDelete);
             db.SaveChanges();
-            return $"deleted";
+            return "deleted";
         }
         public static async Task<string> Get(string id)
         {

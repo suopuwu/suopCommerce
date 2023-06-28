@@ -1,5 +1,6 @@
 ﻿using Azure.Identity;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using suopCommerce.Models;
 using System.ComponentModel;
 
@@ -49,7 +50,12 @@ namespace SuopCommerce.Utils.Data
                     await file.CopyToAsync(ms);
                     ms.Seek(0, SeekOrigin.Begin);
 
-                    await blobClient.UploadAsync(ms);
+                    await blobClient.UploadAsync(ms);//todo fix frontend breaking when a user has a product in their cart that has been removed.
+                    BlobHttpHeaders headers = new BlobHttpHeaders
+                    {
+                        ContentType = "image/" + extension[1..]
+                    };
+                    await blobClient.SetHttpHeadersAsync(headers); 
                     blobs.Add(blobUrl);
                 }
                 Image tempImage = new();

@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Stripe;
+using SuopCommerce.Models;
 using SuopCommerce.Pages;
 using SuopCommerce.Utils;
 using SuopCommerce.Utils.Data;
@@ -56,7 +58,17 @@ app.MapPost("/api/products/{id}", async (HttpContext context, string id) =>
                     context.Request.Form["Tags"]!);
 });
 
-app.MapPost("/create-payment-intent", PaymentIntentApiController.Create);
+app.MapPost("/api/checkout", async (HttpContext context) => {
+    using StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8);
+    string jsonData = await reader.ReadToEndAsync();
+    var parsedData = JsonConvert.DeserializeObject<CartItem[]>(jsonData);
+    if (parsedData == null)
+    {
+        context.Response.StatusCode = 400;
+        return "Error: data is null";
+    }
+    return await PaymentIntentHandler.CreateAsync(parsedData);
+});
 app.UseAuthorization();
 app.MapRazorPages();
 
