@@ -66,7 +66,9 @@ app.MapPost("/api/checkout", async (HttpContext context) => {
         context.Response.StatusCode = 400;
         return "Error: data is null";
     }
-    return await PaymentIntentHandler.CreateAsync(parsedData);
+    var headers = context.Request.Headers;
+    
+    return await PaymentIntentHandler.CreateAsync(parsedData, headers["successUrl"], headers["cancelUrl"]);
 });
 app.UseAuthorization();
 app.MapRazorPages();

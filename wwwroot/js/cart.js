@@ -132,6 +132,10 @@ class Cart {
         let stripeLoading = SuopSnack.add('Bringing you to stripe...', Infinity, null, true)
         fetch(window.location.origin + '/api/checkout', {
             method: 'post',
+            headers: {
+                'cancelUrl': window.location,
+                'successUrl': window.location.origin + '/success'
+            },
             body: JSON.stringify(this.items)
         })
         .then(response => response.text())

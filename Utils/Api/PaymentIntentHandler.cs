@@ -13,8 +13,10 @@ namespace SuopCommerce.Utils.Api
 {
     public static class PaymentIntentHandler
     {
-        public static async Task<string> CreateAsync(CartItem[] cart)
+        public static async Task<string> CreateAsync(CartItem[] cart, string? successUrl, string? cancelUrl)
         {
+            successUrl = successUrl ?? string.Empty;
+            cancelUrl = cancelUrl ?? string.Empty;
             var lineItems = new List<SessionLineItemOptions>();
             using var db = new StoreContext();
 
@@ -39,13 +41,12 @@ namespace SuopCommerce.Utils.Api
                     Quantity = 1,
                 });
             }
-            var domain = "https://localhost:7072";
             var options = new SessionCreateOptions
             {
                 LineItems = lineItems,
                 Mode = "payment",
-                SuccessUrl = domain + "/success",
-                CancelUrl = domain + "/checkout",
+                SuccessUrl = successUrl,
+                CancelUrl = cancelUrl,
             };
             var service = new SessionService();
             Session session = await service.CreateAsync(options);
