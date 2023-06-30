@@ -9,8 +9,7 @@ using Newtonsoft.Json.Linq;
 using Stripe;
 using SuopCommerce.Models;
 using SuopCommerce.Pages;
-using SuopCommerce.Utils;
-using SuopCommerce.Utils.Data;
+using SuopCommerce.Utils.Api;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

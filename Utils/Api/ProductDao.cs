@@ -1,8 +1,9 @@
 ﻿using Azure.Core;
 using suopCommerce.Models;
+using SuopCommerce.Utils.Data;
 using System.Text.Json;
 
-namespace SuopCommerce.Utils.Data
+namespace SuopCommerce.Utils.Api
 {
     public static class ProductDao
     {

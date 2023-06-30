@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using SuopCommerce.Models;
 using suopCommerce.Models;
 
-namespace SuopCommerce.Utils
+namespace SuopCommerce.Utils.Api
 {
     public static class PaymentIntentHandler
     {
@@ -17,7 +17,7 @@ namespace SuopCommerce.Utils
         {
             var lineItems = new List<SessionLineItemOptions>();
             using var db = new StoreContext();
-            
+
             foreach (var CartItem in cart)
             {
                 if (CartItem.Id == null) continue;
@@ -49,7 +49,7 @@ namespace SuopCommerce.Utils
             };
             var service = new SessionService();
             Session session = await service.CreateAsync(options);
-           
+
             return JsonConvert.SerializeObject(new { Location = session.Url });
         }
     }

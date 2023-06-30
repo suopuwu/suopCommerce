@@ -28,7 +28,7 @@ class Cart {
             //create the cart
             let hoverCart = new SuopPopup('', {
                 floating: true, background: 'white',
-                x: node.offsetLeft + node.offsetWidth, y: node.offsetTop
+                x: node.offsetLeft + node.offsetWidth, y: node.offsetTop + node.offsetHeight
             })
             //add items to the cart
             fillHoverCart(hoverCart)
@@ -36,9 +36,14 @@ class Cart {
             //set the cart to disappear on mouse leave
             hoverCart.node.addEventListener('mouseleave', () => {
                 node.suopCartShown = false
+                node.mouseEnteredHoverCart = false
                 hoverCart.hideThenDelete()
             })
+            hoverCart.node.addEventListener('mouseenter', () => {
+                node.mouseEnteredHoverCart = true
+            })
             hoverCart.toggle()
+            return hoverCart
         }
         function fillHoverCart(popup) {
             let contentContainer = popup.node.querySelector('.suop-popup-content')
@@ -68,11 +73,23 @@ class Cart {
         }
 
         document.querySelectorAll('.cart-hover-target').forEach((node) => {
+            let hoverCart
             node.addEventListener('mouseenter', () => {
                 if (!node.suopCartShown) {
-                    showHoverCart(node)
+                    hoverCart = showHoverCart(node)
                 }
 
+            })
+            node.addEventListener('mouseleave', () => {
+                if (hoverCart) {
+                    setTimeout(() => {
+                        if (!node.mouseEnteredHoverCart) { 
+                            hoverCart.hideThenDelete()
+                            hoverCart = null
+                            node.suopCartShown = false
+                        }
+                    }, 50)
+                }
             })
         })
     }
