@@ -35,6 +35,7 @@ namespace suopCommerce.Models
 
         public double Price { get; set; }
         public string[]? PotentialAddOns { get; set; }
+        public string[]? Extras { get; set; }
         public string[]? Images { get; set; }
         public string[]? Tags { get; set; }
 
