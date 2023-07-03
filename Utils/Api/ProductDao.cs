@@ -7,7 +7,7 @@ namespace SuopCommerce.Utils.Api
 {
     public static class ProductDao
     {
-        public static async Task<string> Create(string id, string name, string description, string categoryId, double price, string[] tags, IFormFileCollection images)
+        public static async Task<string> Create(string id, string name, string description, string categoryId, double price, string[] tags, string[] extras, string[] addOns, IFormFileCollection images)
         {
             StoreContext db = new();
 
@@ -18,6 +18,9 @@ namespace SuopCommerce.Utils.Api
             product.CategoryId = categoryId;
             product.Price = price;
             product.Tags = tags;
+            product.Extras = extras;
+            product.Addons = addOns;
+
             //todo add tags, images, addons, category, just make sure that all fields are editable.
             //todo make it remove metadata
 
@@ -74,7 +77,7 @@ namespace SuopCommerce.Utils.Api
             }
         }
 
-        public static async Task<string> Update(string id, string name, string description, string categoryId, double price, string[] tags)
+        public static async Task<string> Update(string id, string name, string description, string categoryId, double price, string[] tags, string[] extras, string[] addOns)
         {//todo editing the id is buggy, you cannot edit images, tags to not work as well
             StoreContext db = new();
             Product? product = await db.Products.FindAsync(id);
@@ -88,6 +91,8 @@ namespace SuopCommerce.Utils.Api
             product.CategoryId = categoryId;
             product.Price = price;
             product.Tags = tags;
+            product.Extras = extras;
+            product.Addons = addOns;
             await db.SaveChangesAsync();
             return "success";
         }

@@ -36,28 +36,36 @@ StripeConfiguration.ApiKey = "sk_test_51NMGmDHGAiSJzSGYXfof3JxlLvX0oWg8Hh6I23NzC
 app.MapDelete("/api/products/{id}", ProductDao.Delete);
 app.MapPost("/api/products", async (HttpContext context) =>
 {
+    
     return await ProductDao.Create(
                     context.Request.Form["Id"]!,
                     context.Request.Form["Name"]!,
                     context.Request.Form["Description"]!,
                     context.Request.Form["CategoryId"]!,
                     double.Parse(context.Request.Form["Price"]!),
-                    context.Request.Form["Tags"]!,
+                    ((string?)context.Request.Form["Tags"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
+                    ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
+                    ((string?)context.Request.Form["Addons"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
                     context.Request.Form.Files);
 });
 app.MapGet("/api/products/{id}", ProductDao.Get);
 app.MapPost("/api/products/{id}", async (HttpContext context, string id) =>
 {
+    string? tags = context.Request.Form["Tags"];//make sure all image related stuff is deleted on removal
+    tags ??= "";
     return await ProductDao.Update(
                     id,
                     context.Request.Form["Name"]!,
                     context.Request.Form["Description"]!,
                     context.Request.Form["CategoryId"]!,
                     double.Parse(context.Request.Form["Price"]!),
-                    context.Request.Form["Tags"]!);
+                    ((string?)context.Request.Form["Tags"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
+                    ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
+                    ((string?)context.Request.Form["Addons"] ?? "").Split(",").Select(p => p.Trim()).ToArray());
 });
 
-app.MapPost("/api/checkout", async (HttpContext context) => {
+app.MapPost("/api/checkout", async (HttpContext context) =>
+{
     using StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8);
     string jsonData = await reader.ReadToEndAsync();
     var parsedData = JsonConvert.DeserializeObject<CartItem[]>(jsonData);
@@ -67,7 +75,7 @@ app.MapPost("/api/checkout", async (HttpContext context) => {
         return "Error: data is null";
     }
     var headers = context.Request.Headers;
-    
+
     return await PaymentIntentHandler.CreateAsync(parsedData, headers["successUrl"], headers["cancelUrl"]);
 });
 app.UseAuthorization();

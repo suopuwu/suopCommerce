@@ -1,8 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-function removeElement(id) {
+﻿function removeElement(id) {
     document.getElementById(id).remove()
 }
 function deleteProduct(productId) {
@@ -57,6 +53,14 @@ function createProductForm() {
                 <input type="text" name="Tags"/>
             </span>
             <span class="text-input">
+                Extras
+                <input type="text" name="Extras"/>
+            </span>
+            <span class="text-input">
+                Add ons
+                <input type="text" name="Addons"/>
+            </span>
+            <span class="text-input">
                 Images
                 <input type="file" name="Images" multiple="multiple" accept=".png, .jpg, .jpeg, .webp"/>
                 <i class="warning">Note: make sure only trusted users have access to this page, as uploads are not validated beyond extension.</i>
@@ -99,7 +103,7 @@ function createProductForm() {
     createProductPopup.showPopup()
 }
 
-function editProductForm(id, name, description, categoryId, price, tags) {
+function editProductForm(id, name, description, categoryId, price, tags, extras, addons) {
     var editProductPopup = new SuopPopup(`
         <style>
             .update-product-form {
@@ -138,6 +142,14 @@ function editProductForm(id, name, description, categoryId, price, tags) {
                 Tags
                 <input type="text" name="Tags" value="${tags}"/>
             </span>
+            <span class="text-input">
+                Extras
+                <input type="text" name="Extras" value="${extras}"/>
+            </span>
+            <span class="text-input">
+                Add ons
+                <input type="text" name="Addons" value="${addons}"/>
+            </span>
             <button type="submit" class="btn btn-default">Save Changes</button>
         </form>
     `)
@@ -160,7 +172,7 @@ function editProductForm(id, name, description, categoryId, price, tags) {
                 if (data == 'success') {
 
                     uploadIndicator.text = 'Successfully updated product. Refresh to see changes.'
-                    uploadIndicator.setAction(new SuopSnackbar.Action('Refresh', () => window.location = window.location))
+                    uploadIndicator.setAction(new SuopSnack.Action('Refresh', () => window.location = window.location))
                 } else {
                     uploadIndicator.text = 'Error: ' + data
                 }
@@ -168,6 +180,7 @@ function editProductForm(id, name, description, categoryId, price, tags) {
                 })
             .catch(error => {
                 uploadIndicator.text = 'Error: ' + error
+                console.error(error)
             })
         editProductPopup.hideThenDelete()
 

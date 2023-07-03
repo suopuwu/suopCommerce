@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
-
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace suopCommerce.Models
 {
@@ -28,13 +28,14 @@ namespace suopCommerce.Models
 
     public class Product
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public string? CategoryId { get; set; }
 
         public double Price { get; set; }
-        public string[]? PotentialAddOns { get; set; }
+
+        public string[]? Addons { get; set; }
         public string[]? Extras { get; set; }
         public string[]? Images { get; set; }
         public string[]? Tags { get; set; }
