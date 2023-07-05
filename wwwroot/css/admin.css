@@ -1,3 +1,30 @@
 .product-edit-item {
   background-color: #90c28e;
+}
+
+.admin-list {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+}
+
+.admin-list-item {
+  outline: grey 1px solid;
+  margin: 1em 0 0 0;
+  display: inline-flex;
+  flex-flow: row nowrap;
+}
+.admin-list-item > .spacer {
+  flex-grow: 1;
+}
+.admin-list-item > * {
+  padding: 5px;
+}
+.admin-list-item > img {
+  padding: 0;
+  height: 4em;
+}
+.admin-list-item > button {
+  border-radius: 0;
+  cursor: pointer;
 }/*# sourceMappingURL=admin.css.map */

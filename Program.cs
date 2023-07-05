@@ -10,6 +10,7 @@ using Stripe;
 using SuopCommerce.Models;
 using SuopCommerce.Pages;
 using SuopCommerce.Utils.Api;
+using SuopCommerce.Utils.Data;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -78,6 +79,17 @@ app.MapPost("/api/checkout", async (HttpContext context) =>
 
     return await PaymentIntentHandler.CreateAsync(parsedData, headers["successUrl"], headers["cancelUrl"]);
 });
+
+app.MapPost("/api/images", async (HttpContext context) =>
+{
+    return await BlobHandler.UploadImagesAsync(context.Request.Form.Files);
+});
+app.MapDelete("/api/images", async (HttpContext context) =>
+{
+    return await BlobHandler.DeleteImageAsync((string?)context.Request.Headers["url"] ?? "");
+});
+
+
 app.UseAuthorization();
 app.MapRazorPages();
 

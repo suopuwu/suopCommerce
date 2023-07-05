@@ -18,14 +18,13 @@ class SuopPopup {
     id
     _content
     node
+    contentNode
 
     get content() {
         return this._content
     }
     set content(newContent) {
-        document
-            .getElementById(this.id)
-            .querySelector('.suop-popup-content').innerHTML = newContent
+        this.contentNode.innerHTML = newContent
         this._content = newContent
     }
 
@@ -208,6 +207,7 @@ class SuopPopup {
         var body = document.querySelector('body')
 
         body.prepend(this.createPopupElement())
+        this.contentNode = this.node.querySelector('.suop-popup-content')
         this.#createActions()
     }
 

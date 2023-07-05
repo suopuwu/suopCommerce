@@ -1,2 +1,23 @@
 .product-edit-item
   background-color: #90c28e
+
+.admin-list
+  display: flex
+  flex-flow: column
+  width: 100%
+.admin-list-item
+  outline: grey 1px solid
+  margin: 1em 0 0 0
+
+  display: inline-flex
+  flex-flow: row nowrap
+  > .spacer
+    flex-grow: 1
+  > *
+    padding: 5px
+  > img
+    padding: 0
+    height: 4em
+  > button
+    border-radius: 0
+    cursor: pointer

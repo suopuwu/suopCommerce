@@ -26,7 +26,7 @@ namespace SuopCommerce.Utils.Api
 
             try
             {
-                var blobs = await BlobHandler.UploadImageAsync(images);
+                var blobs = await BlobHandler.UploadImagesAsync(images);
                 product.Images = blobs.ToArray();
                 db.Products.Add(product);
 

@@ -17,9 +17,11 @@ namespace SuopCommerce.Pages.Admin
 
         public string nextId = "";
         public List<Product> products = new();
+        public List<suopCommerce.Models.Image> images = new();
         public void OnGet()
         {
             products = db.Products.ToList();
+            images = db.Images.ToList();
             nextId = Uuid.GetUuid();
         }
     }

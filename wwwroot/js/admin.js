@@ -4,7 +4,7 @@
 function deleteProduct(productId) {
     confirmAction('Are you sure you want to delete this product? This cannot be undone.', () => {
         fetch(`${window.location.origin}/api/products/${productId}`,
-            { method: 'DELETE' })
+            { method: 'delete' })
             .then((data) => data.text())
             .then((data) => {
                 if (data == 'deleted') {
@@ -14,6 +14,25 @@ function deleteProduct(productId) {
 
     })
 }
+
+function deleteImage(url) {
+    confirmAction('Are you sure you want to delete this image? This cannot be undone. Deleting images that are in use will cause broken pages.', () => {
+        let deletionIndicator = SuopSnack.add('Deleting...', Infinity, null, true)
+        fetch(`${window.location.origin}/api/images`,
+            { method: 'delete', headers: { 'url': url } })
+            .then((data) => data.text())
+            .then((data) => {
+                if (data.split(' ')[0] == 'deleted') {
+                    removeElement(url)
+                    deletionIndicator.close()
+                } else {
+                    deletionIndicator.text = 'error: ' + data
+                }
+            })
+
+    })
+}
+
 function createProductForm() {
     var createProductPopup = new SuopPopup(`
         <style>
@@ -92,7 +111,7 @@ function createProductForm() {
                     uploadIndicator.text = 'Error: ' + data
                 }
 
-                })
+            })
             .catch(error => {
                 uploadIndicator.text = 'Error: ' + error
             })
@@ -177,7 +196,7 @@ function editProductForm(id, name, description, categoryId, price, tags, extras,
                     uploadIndicator.text = 'Error: ' + data
                 }
 
-                })
+            })
             .catch(error => {
                 uploadIndicator.text = 'Error: ' + error
                 console.error(error)
@@ -187,4 +206,71 @@ function editProductForm(id, name, description, categoryId, price, tags, extras,
     })
 
     editProductPopup.showPopup()
+}
+
+function imageForm() {
+    var formPopup = createBaseFormPopup()
+
+    //make the form with input boxes
+    const form = document.createElement('form')
+    form.innerHTML = `
+        <div><h1>Upload Image</h1></div>
+        <span class="text-input">
+            Images
+            <input type="file" name="Images" multiple="multiple" accept=".png, .jpg, .jpeg, .webp" required/>
+            <i class="warning">Note: make sure only trusted users have access to this page, as uploads are not validated beyond extension.</i>
+        </span>
+        <button type="submit" class="btn btn-default">Register</button>
+    `
+    form.enctype = 'multipart/form-data'
+    form.classList.add('create-product-form')
+    form.method = 'post'
+    formPopup.contentNode.append(form)
+
+
+    const submitUrl = window.location.origin + '/api/images'
+
+    //handle form submission
+    form.addEventListener('submit', e => {
+        e.preventDefault() // Prevent the form from submitting normally
+
+        const formData = new FormData(form); // Get the form data
+        var uploadIndicator = SuopSnack.add('Uploading product...', Infinity)
+
+        fetch(submitUrl, {
+            method: form.method,//todo refactor to reuse this function for all forms
+            body: formData
+        })
+            .then(response => response.text())
+            .then(data => {
+                if (JSON.parse(data).length > 0) {
+
+                    uploadIndicator.text = `Successfully uploaded ${JSON.parse(data).length} image${JSON.parse(data).length == 1 ? '' : 's'}. Refresh to see changes.`
+                    uploadIndicator.setAction(new SuopSnack.Action('Refresh', () => window.location = window.location))
+                } else {
+                    uploadIndicator.text = 'Error: ' + data
+                }
+
+            })
+            .catch(error => {
+                uploadIndicator.text = 'Error: ' + error
+            })
+        formPopup.hideThenDelete()
+
+    })
+
+    formPopup.showPopup()
+}
+
+function createBaseFormPopup() {
+    return new SuopPopup(`
+        <style>
+            .create-product-form {
+                padding: 10px;
+                border-radius: 10px;
+                background-color: white;
+            }
+            
+        </style>
+    `)
 }

@@ -41,19 +41,11 @@ namespace suopCommerce.Models
         public string[]? Tags { get; set; }
 
     }
-
-    public class AddOn
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string? Description { get; set; }
-        public double Price { get; set; }
-    }
-
     public class Image
     {
         [Key]
-        public string Url { get; set; }
-        public string? desctiption { get; set; }
+        public string Url { get; set; } = string.Empty;
+        
+        public string? Description { get; set; }
     }
 }

@@ -24,7 +24,7 @@ namespace SuopCommerce.Utils.Data
             }
 
         }
-        public static async Task<List<string>> UploadImageAsync(IFormFileCollection files)
+        public static async Task<List<string>> UploadImagesAsync(IFormFileCollection files)
         {
             string containerName = "images";
             List<string> blobs = new();
@@ -50,7 +50,7 @@ namespace SuopCommerce.Utils.Data
                     await file.CopyToAsync(ms);
                     ms.Seek(0, SeekOrigin.Begin);
 
-                    await blobClient.UploadAsync(ms);//todo fix frontend breaking when a user has a product in their cart that has been removed.
+                    await blobClient.UploadAsync(ms);
                     BlobHttpHeaders headers = new BlobHttpHeaders
                     {
                         ContentType = "image/" + extension[1..]
@@ -70,7 +70,6 @@ namespace SuopCommerce.Utils.Data
         {
             string containerName = "images";
             string blobName = url.Split('/').Last();
-
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
             if (await containerClient.DeleteBlobIfExistsAsync(blobName))
@@ -78,12 +77,15 @@ namespace SuopCommerce.Utils.Data
                 Image? imageToDelete = db.Images.Find(url);
                 if (imageToDelete == null)
                 {
-                    return "failed to delete, no such image at url " + url;
+                    return "Deleted image from storage, but image does not exist in database.";
                 }
 
                 db.Images.Remove(imageToDelete);
                 db.SaveChanges();
 
+            } else
+            {
+                return "Failed to delete image, image does not exist in storage";
             }
             return "deleted the image at url " + url;
         }
