@@ -34,7 +34,7 @@ namespace SuopCommerce.Utils.Api
                         {
                             Name = item.Name,
                             Description = item.Description,
-                            Images = item.Images?.ToList(),
+                            //Images = item.Images?.ToList(),todo fix this
                         },
                         UnitAmount = (long?)(item.Price * 100)
                     },

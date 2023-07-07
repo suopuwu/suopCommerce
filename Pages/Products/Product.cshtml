@@ -5,9 +5,10 @@
 <link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
 
 <h1>@Model.product.Name</h1>
-@foreach (var image in Model.product.Images)
+@foreach (var image in Model.imageIds)
 {
     <img src="@image">
 }
 <p>@Model.product.Description</p>
+<p>@Model.debug</p>
 <button onclick="suopCart.add(new CartItem('@Model.product.Id', 1))">Buy now</button>

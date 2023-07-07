@@ -1,18 +1,16 @@
 ﻿using Azure.Core;
 using suopCommerce.Models;
-using SuopCommerce.Utils.Data;
 using System.Text.Json;
 
 namespace SuopCommerce.Utils.Api
 {
     public static class ProductDao
     {
-        public static async Task<string> Create(string id, string name, string description, string categoryId, double price, string[] tags, string[] extras, string[] addOns, IFormFileCollection images)
+        public static async Task<string> Create(string name, string description, string categoryId, double price, string[] tags, string[] extras, int[] addOns, IFormFileCollection images)
         {
             StoreContext db = new();
 
             Product product = new();
-            product.Id = id;
             product.Name = name;
             product.Description = description;
             product.CategoryId = categoryId;
@@ -41,7 +39,7 @@ namespace SuopCommerce.Utils.Api
                 return ex.Message;
             }
         }
-        public static async Task<string> Delete(string id)
+        public static async Task<string> Delete(int id)
         {
             StoreContext db = new();
             Product? productToDelete = db.Products.Find(id);
@@ -52,9 +50,9 @@ namespace SuopCommerce.Utils.Api
 
             if (productToDelete.Images != null)
             {
-                foreach (string imageUrl in productToDelete.Images)
+                foreach (int imageId in productToDelete.Images)
                 {
-                    await BlobHandler.DeleteImageAsync(imageUrl);
+                    await BlobHandler.DeleteImageAsync(imageId);
                 }
             }
 
@@ -63,7 +61,7 @@ namespace SuopCommerce.Utils.Api
             db.SaveChanges();
             return "deleted";
         }
-        public static async Task<string> Get(string id)
+        public static async Task<string> Get(int id)
         {
             StoreContext db = new();
             try
@@ -77,7 +75,7 @@ namespace SuopCommerce.Utils.Api
             }
         }
 
-        public static async Task<string> Update(string id, string name, string description, string categoryId, double price, string[] tags, string[] extras, string[] addOns)
+        public static async Task<string> Update(int id, string name, string description, string categoryId, double price, string[] tags, string[] extras, int[] addOns)
         {//todo editing the id is buggy, you cannot edit images, tags to not work as well
             StoreContext db = new();
             Product? product = await db.Products.FindAsync(id);

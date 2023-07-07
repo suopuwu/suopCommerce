@@ -18,6 +18,10 @@ namespace SuopCommerce.Pages.Admin
         public string nextId = "";
         public List<Product> products = new();
         public List<suopCommerce.Models.Image> images = new();
+        public async Task<suopCommerce.Models.Image?[]> GetImagesAsync(int[]? ids)
+        {
+            return await ImageRetriever.FromListAsync(ids, false);
+        }
         public void OnGet()
         {
             products = db.Products.ToList();

@@ -21,7 +21,11 @@ function getProduct(id) {
         .then(data => JSON.parse(data))
 }
 
-function confirmAction(text, callback) {
+function confirmAction(text, callback, autoConfirm = false) {
+    if (autoConfirm) {
+        callback()
+        return
+    }
     var confirmationPopup = new SuopPopup(text, {
         confirm: () => {
             callback();

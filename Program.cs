@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Stripe;
 using SuopCommerce.Models;
 using SuopCommerce.Pages;
 using SuopCommerce.Utils.Api;
-using SuopCommerce.Utils.Data;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,19 +34,21 @@ app.UseStaticFiles();
 app.UseRouting();
 
 StripeConfiguration.ApiKey = "sk_test_51NMGmDHGAiSJzSGYXfof3JxlLvX0oWg8Hh6I23NzCnLiUSEgRby5Lr23ZIuv9wZOUnwOzEsINXfdV73euSefLink00StTj2tFH";
-app.MapDelete("/api/products/{id}", ProductDao.Delete);
+app.MapDelete("/api/products/{id}", async (string id) =>
+{
+    return await ProductDao.Delete(int.Parse(id));
+});
 app.MapPost("/api/products", async (HttpContext context) =>
 {
     
     return await ProductDao.Create(
-                    context.Request.Form["Id"]!,
                     context.Request.Form["Name"]!,
                     context.Request.Form["Description"]!,
                     context.Request.Form["CategoryId"]!,
                     double.Parse(context.Request.Form["Price"]!),
                     ((string?)context.Request.Form["Tags"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
                     ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
-                    ((string?)context.Request.Form["Addons"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
+                    ((string?)context.Request.Form["Addons"] ?? "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray(),
                     context.Request.Form.Files);
 });
 app.MapGet("/api/products/{id}", ProductDao.Get);
@@ -55,14 +57,14 @@ app.MapPost("/api/products/{id}", async (HttpContext context, string id) =>
     string? tags = context.Request.Form["Tags"];//make sure all image related stuff is deleted on removal
     tags ??= "";
     return await ProductDao.Update(
-                    id,
+                    int.Parse(id),
                     context.Request.Form["Name"]!,
                     context.Request.Form["Description"]!,
                     context.Request.Form["CategoryId"]!,
                     double.Parse(context.Request.Form["Price"]!),
                     ((string?)context.Request.Form["Tags"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
                     ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
-                    ((string?)context.Request.Form["Addons"] ?? "").Split(",").Select(p => p.Trim()).ToArray());
+                    ((string?)context.Request.Form["Addons"] ?? "").Split(",").Select(p => int.Parse(p.Trim())).ToArray());
 });
 
 app.MapPost("/api/checkout", async (HttpContext context) =>
@@ -86,7 +88,7 @@ app.MapPost("/api/images", async (HttpContext context) =>
 });
 app.MapDelete("/api/images", async (HttpContext context) =>
 {
-    return await BlobHandler.DeleteImageAsync((string?)context.Request.Headers["url"] ?? "");
+    return await BlobHandler.DeleteImageAsync(int.Parse(context.Request.Headers["id"]!));
 });
 
 

@@ -28,22 +28,24 @@ namespace suopCommerce.Models
 
     public class Product
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string? CategoryId { get; set; }
 
         public double Price { get; set; }
 
-        public string[]? Addons { get; set; }
+        public int[]? Addons { get; set; }
         public string[]? Extras { get; set; }
-        public string[]? Images { get; set; }
+        public int[]? Images { get; set; }
         public string[]? Tags { get; set; }
 
     }
     public class Image
     {
-        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         public string Url { get; set; } = string.Empty;
         
         public string? Description { get; set; }

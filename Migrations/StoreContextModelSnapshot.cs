@@ -23,25 +23,34 @@ namespace SuopCommerce.Migrations
 
             modelBuilder.Entity("suopCommerce.Models.Image", b =>
                 {
-                    b.Property<string>("Url")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("desctiption")
-                        .HasColumnType("text")
-                        .HasColumnName("Description");
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.HasKey("Url");
+                    b.HasKey("Id");
 
                     b.ToTable("Images");
                 });
 
             modelBuilder.Entity("suopCommerce.Models.Product", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
 
-                    b.Property<string[]>("Addons")
-                        .HasColumnType("text[]");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int[]>("Addons")
+                        .HasColumnType("integer[]");
 
                     b.Property<string>("CategoryId")
                         .HasColumnType("text");
@@ -53,8 +62,8 @@ namespace SuopCommerce.Migrations
                     b.Property<string[]>("Extras")
                         .HasColumnType("text[]");
 
-                    b.Property<string[]>("Images")
-                        .HasColumnType("text[]");
+                    b.Property<int[]>("Images")
+                        .HasColumnType("integer[]");
 
                     b.Property<string>("Name")
                         .IsRequired()

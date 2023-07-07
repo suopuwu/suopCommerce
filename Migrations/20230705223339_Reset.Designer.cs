@@ -11,8 +11,8 @@ using suopCommerce.Models;
 namespace SuopCommerce.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20230703212206_renameAddons")]
-    partial class renameAddons
+    [Migration("20230705223339_Reset")]
+    partial class Reset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,21 +26,34 @@ namespace SuopCommerce.Migrations
 
             modelBuilder.Entity("suopCommerce.Models.Image", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("desctiption")
-                        .HasColumnType("text");
-
-                    b.HasKey("Url");
+                    b.HasKey("Id");
 
                     b.ToTable("Images");
                 });
 
             modelBuilder.Entity("suopCommerce.Models.Product", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int[]>("Addons")
+                        .HasColumnType("integer[]");
 
                     b.Property<string>("CategoryId")
                         .HasColumnType("text");
@@ -52,16 +65,12 @@ namespace SuopCommerce.Migrations
                     b.Property<string[]>("Extras")
                         .HasColumnType("text[]");
 
-                    b.Property<string[]>("Images")
-                        .HasColumnType("text[]");
+                    b.Property<int[]>("Images")
+                        .HasColumnType("integer[]");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string[]>("PotentialAddOns")
-                        .HasColumnType("text[]")
-                        .HasColumnName("Addons");
 
                     b.Property<double>("Price")
                         .HasColumnType("double precision");

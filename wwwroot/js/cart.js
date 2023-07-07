@@ -151,10 +151,10 @@ class Cart {
 }
 
 class CartItem {
-    id = ''
+    id = 0
     quantity = 1
     children = []
-    constructor(id = '', quantity = 1, children = []) {
+    constructor(id = 0, quantity = 1, children = []) {
         this.id = id
         this.quantity = quantity
         this.children = children

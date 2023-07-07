@@ -1,4 +1,14 @@
-﻿function removeElement(id) {
+﻿function retrieveSetting(name) {
+    switch (name) {
+        case 'confirm-deletion':
+            return document.getElementById('confirm-deletion-checkbox').checked
+            break
+        default:
+            return false            
+    }
+}
+
+function removeElement(id) {
     document.getElementById(id).remove()
 }
 function deleteProduct(productId) {
@@ -8,29 +18,31 @@ function deleteProduct(productId) {
             .then((data) => data.text())
             .then((data) => {
                 if (data == 'deleted') {
-                    removeElement(productId)
+                    removeElement(`product_${productId}`)
                 }
             })
 
-    })
-}
+    }, !retrieveSetting('confirm-deletion')
+        //todo make images work again
+    )
+}//todo make suopPopup not right aligned for the content within it
 
-function deleteImage(url) {
+function deleteImage(id) {
     confirmAction('Are you sure you want to delete this image? This cannot be undone. Deleting images that are in use will cause broken pages.', () => {
         let deletionIndicator = SuopSnack.add('Deleting...', Infinity, null, true)
         fetch(`${window.location.origin}/api/images`,
-            { method: 'delete', headers: { 'url': url } })
+            { method: 'delete', headers: { 'id': id } })
             .then((data) => data.text())
             .then((data) => {
                 if (data.split(' ')[0] == 'deleted') {
-                    removeElement(url)
+                    removeElement(`image_${id}`)
                     deletionIndicator.close()
                 } else {
                     deletionIndicator.text = 'error: ' + data
                 }
             })
 
-    })
+    }, !retrieveSetting('confirm-deletion'))
 }
 
 function createProductForm() {
@@ -46,11 +58,6 @@ function createProductForm() {
 
         <form enctype="multipart/form-data" method="post" class="create-product-form">
             <div><h1>Add product</h1></div>
-
-            <span class="text-input">
-                Id
-                <input type="text" name="Id" value="${crypto.randomUUID()}" required/>
-            </span>
             <span class="text-input">
                 Name
                 <input type="text" name="Name" value="temp" required />
@@ -214,9 +221,8 @@ function imageForm() {
     //make the form with input boxes
     const form = document.createElement('form')
     form.innerHTML = `
-        <div><h1>Upload Image</h1></div>
+        <div><h1>Upload Images</h1></div>
         <span class="text-input">
-            Images
             <input type="file" name="Images" multiple="multiple" accept=".png, .jpg, .jpeg, .webp" required/>
             <i class="warning">Note: make sure only trusted users have access to this page, as uploads are not validated beyond extension.</i>
         </span>
@@ -235,7 +241,7 @@ function imageForm() {
         e.preventDefault() // Prevent the form from submitting normally
 
         const formData = new FormData(form); // Get the form data
-        var uploadIndicator = SuopSnack.add('Uploading product...', Infinity)
+        var uploadIndicator = SuopSnack.add('Uploading image...', Infinity)
 
         fetch(submitUrl, {
             method: form.method,//todo refactor to reuse this function for all forms

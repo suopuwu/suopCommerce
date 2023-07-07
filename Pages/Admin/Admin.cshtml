@@ -2,26 +2,43 @@
 @model AdminModel
 @{
 }
+
 <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 <p>@ViewData["debug"]</p>
+<div class="admin-list">
+    <div><h1>Admin Settings</h1></div>
+    <div>
+        <input type="checkbox" id="confirm-deletion-checkbox" checked/>
+        Ask to confirm deletion
+    </div>
+    <div>
+        <input type="checkbox" checked />
+        Remove deleted images from products (decreases performance)
+    </div>
+
+</div>
+
 <div class="admin-list">
     <div><h1>Products</h1></div>
     <div>
         <button onclick="createProductForm()">Add product</button>
     </div>
-
     @foreach (var product in Model.products)
     {
-        <div class="admin-list-item" id="@product.Id">
-            @foreach (var image in product.Images)
+        <div class="admin-list-item" id="product_@product.Id">
+            @foreach (var image in await Model.GetImagesAsync(product.Images))
             {
-                <img src="@image">
+                <img src="@image?.Url">
+                @if(image == null)
+                {
+                    <span>Has null images</span>
+                }
             }
 
             <p>@product.Name</p>
             <p>@product.Price</p>
             <span class="spacer"></span>
-            <button class="product-edit-item" onclick="editProductForm('@product.Id', `@product.Name`, `@product.Description`, `@product.CategoryId`, `@product.Price`, `@string.Join(", ", product.Tags ?? new string[] {})`, `@string.Join(", ", product.Extras ?? new string[] {})`, `@string.Join(", ", product.Addons ?? new string[] {})`)">📝</button>
+            <button class="product-edit-item" onclick="editProductForm('@product.Id', `@product.Name`, `@product.Description`, `@product.CategoryId`, `@product.Price`, `@string.Join(", ", product.Tags ?? new string[] {})`, `@string.Join(", ", product.Extras ?? new string[] {})`, `@string.Join(", ", product.Addons ?? new int[] {})`)">📝</button>
             <button class="product-delete-item" onclick="deleteProduct('@product.Id')">✖️</button>
         </div>
     }
@@ -34,13 +51,13 @@
 
     @foreach (var image in Model.images)
     {
-        <div class="admin-list-item" id="@image.Url">
+        <div class="admin-list-item" id="image_@image.Id">
             <img src="@image.Url" alt="" />
             <p>@image.Description</p>
 
             <span class="spacer"></span>
             <button class="product-edit-item">📝</button>
-            <button class="product-delete-item" onclick="deleteImage('@image.Url')">✖️</button>
+            <button class="product-delete-item" onclick="deleteImage('@image.Id')">✖️</button>
         </div>
     }
 </div>

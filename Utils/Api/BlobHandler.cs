@@ -3,8 +3,9 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using suopCommerce.Models;
 using System.ComponentModel;
+using System.Security.Policy;
 
-namespace SuopCommerce.Utils.Data
+namespace SuopCommerce.Utils.Api
 {
     public static class BlobHandler
     {
@@ -24,10 +25,10 @@ namespace SuopCommerce.Utils.Data
             }
 
         }
-        public static async Task<List<string>> UploadImagesAsync(IFormFileCollection files)
+        public static async Task<List<int>> UploadImagesAsync(IFormFileCollection files)
         {
             string containerName = "images";
-            List<string> blobs = new();
+            List<int> images = new();
             //connect to azure
 
 
@@ -55,35 +56,39 @@ namespace SuopCommerce.Utils.Data
                     {
                         ContentType = "image/" + extension[1..]
                     };
-                    await blobClient.SetHttpHeadersAsync(headers); 
-                    blobs.Add(blobUrl);
+                    await blobClient.SetHttpHeadersAsync(headers);
                 }
                 Image tempImage = new();
                 tempImage.Url = blobUrl;
                 db.Images.Add(tempImage);
                 db.SaveChanges();
+                images.Add(tempImage.Id);
             }
-            return blobs;
+            return images;
         }
 
-        public static async Task<string> DeleteImageAsync(string url)
+        public static async Task<string> DeleteImageAsync(int id)
         {
+            Image? imageToDelete = db.Images.Find(id);
+            if (imageToDelete == null)
+            {
+                return "No such image within the database";
+            }
+            string url = imageToDelete.Url;
             string containerName = "images";
             string blobName = url.Split('/').Last();
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
             if (await containerClient.DeleteBlobIfExistsAsync(blobName))
             {
-                Image? imageToDelete = db.Images.Find(url);
-                if (imageToDelete == null)
-                {
-                    return "Deleted image from storage, but image does not exist in database.";
-                }
+
+
 
                 db.Images.Remove(imageToDelete);
                 db.SaveChanges();
 
-            } else
+            }
+            else
             {
                 return "Failed to delete image, image does not exist in storage";
             }
