@@ -29,9 +29,12 @@ class SuopPopup {
     }
 
     #createActions() {
-        var container = document
+        var container = document.createElement('div')
+        container.classList.add('suop-popup-actions')
+        document
             .getElementById(this.id)
             .querySelector('.suop-popup-wrapper')
+            .append(container)
         function createAction(iconHtml, callback) {
             var button = document.createElement('span')
             button.innerHTML = iconHtml
@@ -115,12 +118,17 @@ class SuopPopup {
         padding: ${this.#options.padding}px;
         border-radius: ${this.#options.borderRadius}px;
         line-height: 0;
-        text-align: right;
+        display: flex;
+        flex-flow: column;
       }
 
       .suop-popup-content {
         line-height: normal
         
+      }
+
+      .suop-popup-actions {
+          text-align: right;
       }
 
       .suop-popup-button {

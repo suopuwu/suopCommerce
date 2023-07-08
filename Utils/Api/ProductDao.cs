@@ -6,40 +6,52 @@ namespace SuopCommerce.Utils.Api
 {
     public static class ProductDao
     {
-        public static async Task<string> Create(string name, string description, string categoryId, double price, string[] tags, string[] extras, int[] addOns, IFormFileCollection images)
+        //updates a product if it exists, creates it otherwise
+        public static async Task<string> Set(string name, string description, string category, double price, string[] tags, string[] extras, int[] addOns, int[] images, int? id = null)
         {
             StoreContext db = new();
 
-            Product product = new();
+            Product product;
+            if (id == null)
+            {
+                product = new Product();
+            } else
+            {
+                try
+                {
+
+                    product = await db.Products.FindAsync(id) ?? throw new Exception("Product not found");
+                } catch(Exception e) {
+                    return JsonSerializer.Serialize(new { success = false, message = e.Message });
+                }
+            }
             product.Name = name;
             product.Description = description;
-            product.CategoryId = categoryId;
+            product.Category = category;
             product.Price = price;
             product.Tags = tags;
             product.Extras = extras;
             product.Addons = addOns;
-
+            product.Images = images;
             //todo add tags, images, addons, category, just make sure that all fields are editable.
             //todo make it remove metadata
 
             try
             {
-                var blobs = await BlobHandler.UploadImagesAsync(images);
-                product.Images = blobs.ToArray();
-                db.Products.Add(product);
+                if (id == null)
+                {
+                    await db.Products.AddAsync(product);
+                }
 
                 db.SaveChanges();
-                return "success";
-
-                //todo make the debug string display when delayed due to the upload time on an image.
-
+                return JsonSerializer.Serialize(new { success = true });
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return JsonSerializer.Serialize(new { success = false, message = ex.Message });
             }
         }
-        public static async Task<string> Delete(int id)
+        public static async Task<string> Delete(int id, bool deleteImages)
         {
             StoreContext db = new();
             Product? productToDelete = db.Products.Find(id);
@@ -48,11 +60,11 @@ namespace SuopCommerce.Utils.Api
                 return "failed";
             }
 
-            if (productToDelete.Images != null)
+            if (productToDelete.Images != null && deleteImages)
             {
                 foreach (int imageId in productToDelete.Images)
                 {
-                    await BlobHandler.DeleteImageAsync(imageId);
+                    await ImageDao.DeleteImageAsync(imageId);
                 }
             }
 
@@ -73,26 +85,6 @@ namespace SuopCommerce.Utils.Api
             {
                 return $"\"Error: {ex.Message}\"";
             }
-        }
-
-        public static async Task<string> Update(int id, string name, string description, string categoryId, double price, string[] tags, string[] extras, int[] addOns)
-        {//todo editing the id is buggy, you cannot edit images, tags to not work as well
-            StoreContext db = new();
-            Product? product = await db.Products.FindAsync(id);
-            if (product == null)
-            {
-                return "\"No such product.\"";
-            }
-            product.Id = id;
-            product.Name = name;
-            product.Description = description;
-            product.CategoryId = categoryId;
-            product.Price = price;
-            product.Tags = tags;
-            product.Extras = extras;
-            product.Addons = addOns;
-            await db.SaveChangesAsync();
-            return "success";
         }
     }
 }

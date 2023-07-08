@@ -2,7 +2,7 @@
 
 namespace SuopCommerce.Utils.Data
 {
-    public static class ImageRetriever
+    public static class BulkImageRetriever
     {
         public static async Task<Image?[]> FromListAsync(int[]? idList, bool pruned = true)
         {//performance: it may be necessary to find a way to prune all items simultaneously.

@@ -34,37 +34,38 @@ app.UseStaticFiles();
 app.UseRouting();
 
 StripeConfiguration.ApiKey = "sk_test_51NMGmDHGAiSJzSGYXfof3JxlLvX0oWg8Hh6I23NzCnLiUSEgRby5Lr23ZIuv9wZOUnwOzEsINXfdV73euSefLink00StTj2tFH";
-app.MapDelete("/api/products/{id}", async (string id) =>
+app.MapDelete("/api/products/{id}", async (HttpContext context, string id) =>
 {
-    return await ProductDao.Delete(int.Parse(id));
+    return await ProductDao.Delete(int.Parse(id), context.Request.Headers["delete-images"] == "true");
 });
 app.MapPost("/api/products", async (HttpContext context) =>
 {
-    
-    return await ProductDao.Create(
+
+    return await ProductDao.Set(
                     context.Request.Form["Name"]!,
                     context.Request.Form["Description"]!,
-                    context.Request.Form["CategoryId"]!,
+                    context.Request.Form["Category"]!,
                     double.Parse(context.Request.Form["Price"]!),
-                    ((string?)context.Request.Form["Tags"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
-                    ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
-                    ((string?)context.Request.Form["Addons"] ?? "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray(),
-                    context.Request.Form.Files);
+                    ((string?)context.Request.Form["Tags"] ?? "").Replace(" ", "").Split(",").ToArray(),
+                    ((string?)context.Request.Form["Extras"] ?? "").Replace(" ", "").Split(",").ToArray(),
+                    ((string?)context.Request.Form["Addons"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray(),
+                    ((string?)context.Request.Form["Images"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray()
+                    );
 });
 app.MapGet("/api/products/{id}", ProductDao.Get);
-app.MapPost("/api/products/{id}", async (HttpContext context, string id) =>
+app.MapPost("/api/products/{id}", async (HttpContext context, int id) =>
 {
-    string? tags = context.Request.Form["Tags"];//make sure all image related stuff is deleted on removal
-    tags ??= "";
-    return await ProductDao.Update(
-                    int.Parse(id),
+    return await ProductDao.Set(
                     context.Request.Form["Name"]!,
                     context.Request.Form["Description"]!,
-                    context.Request.Form["CategoryId"]!,
+                    context.Request.Form["Category"]!,
                     double.Parse(context.Request.Form["Price"]!),
-                    ((string?)context.Request.Form["Tags"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
-                    ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(p => p.Trim()).ToArray(),
-                    ((string?)context.Request.Form["Addons"] ?? "").Split(",").Select(p => int.Parse(p.Trim())).ToArray());
+                    ((string?)context.Request.Form["Tags"] ?? "").Replace(" ", "").Split(",").ToArray(),
+                    ((string?)context.Request.Form["Extras"] ?? "").Replace(" ", "").Split(",").ToArray(),
+                    ((string?)context.Request.Form["Addons"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray(),
+                    ((string?)context.Request.Form["Images"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray(),
+                    id
+                    );
 });
 
 app.MapPost("/api/checkout", async (HttpContext context) =>
@@ -84,13 +85,22 @@ app.MapPost("/api/checkout", async (HttpContext context) =>
 
 app.MapPost("/api/images", async (HttpContext context) =>
 {
-    return await BlobHandler.UploadImagesAsync(context.Request.Form.Files);
+    return await ImageDao.UploadImagesAsync(context.Request.Form.Files);
 });
 app.MapDelete("/api/images", async (HttpContext context) =>
 {
-    return await BlobHandler.DeleteImageAsync(int.Parse(context.Request.Headers["id"]!));
+    return await ImageDao.DeleteImageAsync(int.Parse(context.Request.Headers["id"]!), context.Request.Headers["delete-from-product"] == "true");
 });
 
+app.MapGet("/api/images/{id}", async (int id) =>
+{
+    return await ImageDao.GetImageAsync(id);
+});//todo see about moving these to a different file
+
+app.MapPost("/api/images/{id}", async (HttpContext context, int id) =>
+{
+    return await ImageDao.UpdateImageAsync(id, context.Request.Form["Description"]);
+});
 
 app.UseAuthorization();
 app.MapRazorPages();

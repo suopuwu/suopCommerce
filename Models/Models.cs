@@ -32,14 +32,14 @@ namespace suopCommerce.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string? CategoryId { get; set; }
-
+        public string? Category { get; set; }
         public double Price { get; set; }
 
-        public int[]? Addons { get; set; }
-        public string[]? Extras { get; set; }
-        public int[]? Images { get; set; }
-        public string[]? Tags { get; set; }
+        public string[] Extras { get; set; } = new string[0];
+        public string[] Tags { get; set; } = new string[0];
+
+        public int[] Addons { get; set; } = new int[0];
+        public int[] Images { get; set; } = new int[0];
 
     }
     public class Image

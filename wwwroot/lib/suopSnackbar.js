@@ -118,7 +118,11 @@ class SuopSnack {
             this.renderActions()
         }
 
-        close() {
+        close(delay = 0) {
+            if (delay !== 0) {
+                setTimeout(() => { this.close() }, delay)
+                return
+            } 
             //clears the existing timer as it is no longer needed and causes ui issues.
             let timeoutToClear = this.timeout
             clearTimeout(timeoutToClear)

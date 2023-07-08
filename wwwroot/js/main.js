@@ -21,6 +21,12 @@ function getProduct(id) {
         .then(data => JSON.parse(data))
 }
 
+function getImage(id) {
+    return fetch(`${window.location.origin}/api/images/${id}`)
+        .then((response) => response.text())
+        .then(data => JSON.parse(data))
+}
+
 function confirmAction(text, callback, autoConfirm = false) {
     if (autoConfirm) {
         callback()

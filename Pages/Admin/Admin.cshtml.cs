@@ -20,7 +20,7 @@ namespace SuopCommerce.Pages.Admin
         public List<suopCommerce.Models.Image> images = new();
         public async Task<suopCommerce.Models.Image?[]> GetImagesAsync(int[]? ids)
         {
-            return await ImageRetriever.FromListAsync(ids, false);
+            return await BulkImageRetriever.FromListAsync(ids, false);
         }
         public void OnGet()
         {

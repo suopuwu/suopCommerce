@@ -12,8 +12,12 @@
         Ask to confirm deletion
     </div>
     <div>
-        <input type="checkbox" checked />
+        <input type="checkbox" id="delete-images-from-products-checkbox" checked />
         Remove deleted images from products (decreases performance)
+    </div>
+    <div>
+        <input type="checkbox" id="delete-product-images-checkbox" />
+        Delete images when the associated product is deleted.
     </div>
 
 </div>
@@ -21,7 +25,7 @@
 <div class="admin-list">
     <div><h1>Products</h1></div>
     <div>
-        <button onclick="createProductForm()">Add product</button>
+        <button onclick="popupForm(formModes.createProduct)">Add product</button>
     </div>
     @foreach (var product in Model.products)
     {
@@ -38,7 +42,7 @@
             <p>@product.Name</p>
             <p>@product.Price</p>
             <span class="spacer"></span>
-            <button class="product-edit-item" onclick="editProductForm('@product.Id', `@product.Name`, `@product.Description`, `@product.CategoryId`, `@product.Price`, `@string.Join(", ", product.Tags ?? new string[] {})`, `@string.Join(", ", product.Extras ?? new string[] {})`, `@string.Join(", ", product.Addons ?? new int[] {})`)">📝</button>
+            <button class="product-edit-item" onclick="popupForm(formModes.editProduct, {id: '@product.Id', name: `@product.Name`, description: `@product.Description`, category: `@product.Category`, price: `@product.Price`,tags: `@string.Join(", ", product.Tags ?? new string[] {})`, extras:`@string.Join(", ", product.Extras ?? new string[] {})`, addons:`@string.Join(", ", product.Addons ?? new int[] {})`, images:`@string.Join(", ", product.Images ?? new int[] {})`})">📝</button>
             <button class="product-delete-item" onclick="deleteProduct('@product.Id')">✖️</button>
         </div>
     }
@@ -46,17 +50,17 @@
 <div class="admin-list">
     <div><h1>Images</h1></div>
     <div>
-        <button onclick="imageForm()">Add Images</button>
+        <button onclick="popupForm(formModes.uploadImage)">Add Images</button>
     </div>
 
     @foreach (var image in Model.images)
     {
         <div class="admin-list-item" id="image_@image.Id">
             <img src="@image.Url" alt="" />
-            <p>@image.Description</p>
+            <p class="admin-description">@image.Description</p>
 
             <span class="spacer"></span>
-            <button class="product-edit-item">📝</button>
+            <button class="product-edit-item" onclick="popupForm(formModes.editImage, {id: @image.Id, description: document.getElementById('image_@image.Id').querySelector('.admin-description').innerHTML})">📝</button>
             <button class="product-delete-item" onclick="deleteImage('@image.Id')">✖️</button>
         </div>
     }

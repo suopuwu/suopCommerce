@@ -4,16 +4,17 @@ using Azure.Storage.Blobs.Models;
 using suopCommerce.Models;
 using System.ComponentModel;
 using System.Security.Policy;
+using System.Text.Json;
 
 namespace SuopCommerce.Utils.Api
 {
-    public static class BlobHandler
+    public static class ImageDao
     {
         public const string baseBlobUrl = "https://suopstorageone.blob.core.windows.net";
         public static StoreContext db;
         public static BlobServiceClient blobServiceClient;
 
-        static BlobHandler()
+        static ImageDao()
         {
             db = new();
             blobServiceClient = new BlobServiceClient(
@@ -25,7 +26,7 @@ namespace SuopCommerce.Utils.Api
             }
 
         }
-        public static async Task<List<int>> UploadImagesAsync(IFormFileCollection files)
+        public static async Task<string> UploadImagesAsync(IFormFileCollection files)
         {
             string containerName = "images";
             List<int> images = new();
@@ -64,10 +65,10 @@ namespace SuopCommerce.Utils.Api
                 db.SaveChanges();
                 images.Add(tempImage.Id);
             }
-            return images;
+            return JsonSerializer.Serialize(new { data = images, success = (images.Count > 0)});
         }
 
-        public static async Task<string> DeleteImageAsync(int id)
+        public static async Task<string> DeleteImageAsync(int id, bool deleteFromProduct = false)
         {
             Image? imageToDelete = db.Images.Find(id);
             if (imageToDelete == null)
@@ -92,9 +93,55 @@ namespace SuopCommerce.Utils.Api
             {
                 return "Failed to delete image, image does not exist in storage";
             }
+
+            if (deleteFromProduct)
+            {
+                foreach(var product in db.Products)
+                {
+                    int pos = Array.IndexOf(product.Images ?? Array.Empty<int>(), id);
+                    if(pos > -1)
+                    {
+                        var newArray = product.Images!.ToList();
+                        newArray.RemoveAt(pos);
+                        product.Images = newArray.ToArray();
+                    }
+                }
+                db.SaveChanges();
+            }
+
+            
             return "deleted the image at url " + url;
         }
 
+        public static async Task<string> GetImageAsync(int id) {//todo figure out a way to reduce the reusage of code like below
+            StoreContext db = new();
+            try
+            {
+                return JsonSerializer.Serialize(await db.Images.FindAsync(id) ?? throw new Exception("Image not found"));
+
+            }
+            catch (Exception ex)
+            {
+                return $"\"Error: {ex.Message}\"";
+            }
+        }
+
+        public static async Task<string> UpdateImageAsync(int id, string? description)//todo make all api calls return json strings
+        {
+            StoreContext db = new();
+            var image = await db.Images.FindAsync(id);
+            if(image == null) {
+                return JsonSerializer.Serialize(new { success = false, message = "Image not found."});
+            }
+
+            if(description == null) {
+                return JsonSerializer.Serialize(new { success = false, message = "No description provided." });
+            }
+
+            image.Description = description;
+            db.SaveChanges();
+            return JsonSerializer.Serialize(new { success = true, newDescription = description });
+        }
 
         private static bool validateImageExtension(string extension)
         {

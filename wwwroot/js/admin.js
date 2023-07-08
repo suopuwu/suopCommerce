@@ -3,6 +3,12 @@
         case 'confirm-deletion':
             return document.getElementById('confirm-deletion-checkbox').checked
             break
+        case 'delete-from-product':
+            return document.getElementById('delete-images-from-products-checkbox').checked
+            break
+        case 'delete-product-images':
+            return document.getElementById('delete-product-images-checkbox').checked
+            break
         default:
             return false            
     }
@@ -13,12 +19,19 @@ function removeElement(id) {
 }
 function deleteProduct(productId) {
     confirmAction('Are you sure you want to delete this product? This cannot be undone.', () => {
+        let deletionIndicator = SuopSnack.add('Deleting...', Infinity, null, true)
         fetch(`${window.location.origin}/api/products/${productId}`,
-            { method: 'delete' })
+            { method: 'delete', headers: { 'delete-images': retrieveSetting('delete-product-images') } })
             .then((data) => data.text())
             .then((data) => {
                 if (data == 'deleted') {
                     removeElement(`product_${productId}`)
+                    deletionIndicator.text = 'Successfully deleted a product.'
+                    deletionIndicator.close(1000)
+
+                } else {
+                    deletionIndicator.text = 'error: ' + data
+
                 }
             })
 
@@ -31,12 +44,12 @@ function deleteImage(id) {
     confirmAction('Are you sure you want to delete this image? This cannot be undone. Deleting images that are in use will cause broken pages.', () => {
         let deletionIndicator = SuopSnack.add('Deleting...', Infinity, null, true)
         fetch(`${window.location.origin}/api/images`,
-            { method: 'delete', headers: { 'id': id } })
+            { method: 'delete', headers: { 'id': id, 'delete-from-product': retrieveSetting('delete-from-product') } })
             .then((data) => data.text())
             .then((data) => {
                 if (data.split(' ')[0] == 'deleted') {
                     removeElement(`image_${id}`)
-                    deletionIndicator.close()
+                    deletionIndicator.close(1000)
                 } else {
                     deletionIndicator.text = 'error: ' + data
                 }
@@ -45,238 +58,173 @@ function deleteImage(id) {
     }, !retrieveSetting('confirm-deletion'))
 }
 
-function createProductForm() {
-    var createProductPopup = new SuopPopup(`
-        <style>
-            .create-product-form {
-                padding: 10px;
-                border-radius: 10px;
-                background-color: white;
+const formModes = {
+    uploadImage: 0,
+    editImage: 1,
+    createProduct: 2,
+    editProduct: 3
+}
+function popupForm(mode, data = {}) {
+    if (mode == null) {
+        SuopSnack.add('Error: popup form made without a mode specified.')
+        return
+    }
+    var formPopup = new SuopPopup('', {background: 'white'})
+    var infoSnackbar
+    //create the form element, changing depending on the mode
+    function createFormNode() {
+        const form = document.createElement('form')
+        formPopup.contentNode.append(form)
+        function createInputNode(text, name, value = '', required = true, type = 'text') {
+            var wrapperNode = document.createElement('span')
+            form.append(wrapperNode)
+            wrapperNode.innerHTML = text
+            wrapperNode.classList.add('text-input')
+            var inputNode = document.createElement('input')
+            wrapperNode.append(inputNode)
+
+            inputNode.type = type
+            if (type == 'file') {
+                inputNode.multiple = 'multiple'
+                inputNode.accept = '.png, .jpg, .jpeg, .webp'
+            } else if (type == 'number') {
+                inputNode.step = '0.01'
+                inputNode.min = '0.5'
+                inputNode.max = '99999999'
+            }
+            inputNode.name = name
+            inputNode.required = required
+            if (type != 'file') {
+                inputNode.setAttribute('value', value)
             }
             
-        </style>
+        }
 
-        <form enctype="multipart/form-data" method="post" class="create-product-form">
-            <div><h1>Add product</h1></div>
-            <span class="text-input">
-                Name
-                <input type="text" name="Name" value="temp" required />
-            </span>
-            <span class="text-input">
-                Description
-                <input type="text" name="Description" value="temp" required>
-            </span>
-            <span class="text-input">
-                Category Id
-                <input type="text" name="CategoryId"/>
-            </span>
-            <span class="text-input">
-                Price
-                <input type="number" name="Price" value="0.5" step="0.01" min="0.5" max="99999999"  required />
-            </span>
-            <span class="text-input">
-                Tags
-                <input type="text" name="Tags"/>
-            </span>
-            <span class="text-input">
-                Extras
-                <input type="text" name="Extras"/>
-            </span>
-            <span class="text-input">
-                Add ons
-                <input type="text" name="Addons"/>
-            </span>
-            <span class="text-input">
-                Images
-                <input type="file" name="Images" multiple="multiple" accept=".png, .jpg, .jpeg, .webp"/>
-                <i class="warning">Note: make sure only trusted users have access to this page, as uploads are not validated beyond extension.</i>
-            </span>
-            <button type="submit" class="btn btn-default">Register</button>
-        </form>
-    `)
-
-    const form = document.querySelector('.create-product-form')
-    const submitUrl = window.location.origin + '/api/products'
-
-    form.addEventListener('submit', e => {
-        e.preventDefault() // Prevent the form from submitting normally
-
-        const formData = new FormData(form); // Get the form data
-        var uploadIndicator = SuopSnack.add('Uploading product...', Infinity)
-
-        fetch(submitUrl, { // Use the defined URL
-            method: form.method,
-            body: formData
-        })
-            .then(response => response.text())
-            .then(data => {
-                if (data == 'success') {
-
-                    uploadIndicator.text = 'Successfully added new product. Refresh to see changes.'
-                    uploadIndicator.setAction(new SuopSnack.Action('Refresh', () => window.location = window.location))
-                } else {
-                    uploadIndicator.text = 'Error: ' + data
+        switch (mode) {
+            case formModes.uploadImage:
+                form.innerHTML = `<div><h1>Upload Images</h1></div>`
+                createInputNode('Upload', 'Images', '',  true, 'file')
+                form.method = 'post'
+                form.submitUrl = '/api/images'
+                break
+            case formModes.editImage:
+                form.innerHTML = `<div><h1>Edit Image</h1></div>`
+                createInputNode('Description', 'Description', data.description)
+                form.method = 'post'
+                form.submitUrl = '/api/images/' + data.id
+                break
+            case formModes.createProduct:
+            case formModes.editProduct:
+                form.innerHTML = `<div><h1>Create Product</h1></div>`
+                createInputNode('Name', 'Name', data.name ?? 'Example name')
+                createInputNode('Description', 'Description', data.description ?? 'Example description')
+                createInputNode('Category', 'Category', data.category ?? '', false)
+                createInputNode('Price', 'Price', data.price ?? '0.5', true, 'number')
+                createInputNode('Tags', 'Tags', data.tags ?? '', false)
+                createInputNode('Addons', 'Addons', data.addons ?? '', false)
+                createInputNode('Extras', 'Extras', data.extras ?? '', false)
+                createInputNode('Images', 'Images', data.images ?? '', false)
+                form.method = 'post'
+                form.submitUrl = '/api/products'
+                if (mode == formModes.editProduct) {
+                    form.submitUrl = '/api/products/' + data.id
                 }
+                break
+        }
+        form.innerHTML += '<button type="submit" class="btn btn-default">Submit</button>'
+        form.style.minWidth = '700px'
+        form.enctype = 'multipart/form-data'
+        form.classList.add('create-product-form')
+        return form
+    }
+    function submitStart() {
+        switch (mode) {
+            case formModes.uploadImage:
+                infoSnackbar = SuopSnack.add('Uploading image...', Infinity)
+                break
+            case formModes.editImage:
+                infoSnackbar = SuopSnack.add('Editing image...', Infinity)
+                break
+            case formModes.createProduct:
+                infoSnackbar = SuopSnack.add('Adding product...', Infinity)
+                break
+            case formModes.editProduct:
+                infoSnackbar = SuopSnack.add('Editing product...', Infinity)
+                break
+        }
+    }
 
-            })
-            .catch(error => {
-                uploadIndicator.text = 'Error: ' + error
-            })
-        createProductPopup.hideThenDelete()
+    function handleResponse(response) {
 
-    })
+        switch (mode) {
+            case formModes.uploadImage:
+                infoSnackbar.text = `Successfully uploaded ${response.data.length} image${response.data.length == 1 ? '' : 's'}. Refresh to see changes.`
+                infoSnackbar.setAction(new SuopSnack.Action('Refresh', () => window.location = window.location))
+                break
+            case formModes.createProduct:
+                infoSnackbar.text = `Successfully created product. Refresh to see changes.`
+                infoSnackbar.setAction(new SuopSnack.Action('Refresh', () => window.location = window.location))
+                break
+            case formModes.editProduct:
+                infoSnackbar.text = `Successfully edited product. Refresh to see changes.`
+                infoSnackbar.setAction(new SuopSnack.Action('Refresh', () => window.location = window.location))
+                break
+            case formModes.editImage:
+                infoSnackbar.close(1000)
+                infoSnackbar.text = 'Successfully edited the description.'
+                document.querySelector('#image_' + data.id)
+                    .querySelector('.admin-description')
+                    .innerHTML = response.newDescription
+                break
+        }
+     }
+    function handleFailure(error) {
+        switch (mode) {
+            default:
+                if (infoSnackbar == undefined)
+                    infoSnackbar = SuopSnack.add()
+                infoSnackbar.text = '<i style="color: #FF5252;">Error</i>: ' + error
 
-    createProductPopup.showPopup()
-}
-
-function editProductForm(id, name, description, categoryId, price, tags, extras, addons) {
-    var editProductPopup = new SuopPopup(`
-        <style>
-            .update-product-form {
-                padding: 10px;
-                border-radius: 10px;
-                background-color: white;
-                width: 700px;
-            }
-            
-        </style>
-
-        <form enctype="multipart/form-data" method="post" class="update-product-form">
-            <div><h1>Edit product</h1></div>
-
-            <span class="text-input">
-                Id
-                <input type="text" name="Id" value="${id}" required/>
-            </span>
-            <span class="text-input">
-                Name
-                <input type="text" name="Name" value="${name}" required />
-            </span>
-            <span class="text-input">
-                Description
-                <input type="text" name="Description" value="${description}" required>
-            </span>
-            <span class="text-input">
-                Category Id
-                <input type="text" name="CategoryId" value="${categoryId ?? ''}"/>
-            </span>
-            <span class="text-input">
-                Price
-                <input type="number" name="Price" value="${price}" step="0.01" min="0.5" max="99999999"  required />
-            </span>
-            <span class="text-input">
-                Tags
-                <input type="text" name="Tags" value="${tags}"/>
-            </span>
-            <span class="text-input">
-                Extras
-                <input type="text" name="Extras" value="${extras}"/>
-            </span>
-            <span class="text-input">
-                Add ons
-                <input type="text" name="Addons" value="${addons}"/>
-            </span>
-            <button type="submit" class="btn btn-default">Save Changes</button>
-        </form>
-    `)
-
-    const form = document.querySelector('.update-product-form')
-    const submitUrl = window.location.origin + '/api/products/' + id
-
-    form.addEventListener('submit', e => {//todo refactor to reduce reusage of code
-        e.preventDefault()
-
-        const formData = new FormData(form);
-        var uploadIndicator = SuopSnack.add('updating product...', Infinity)
-
-        fetch(submitUrl, {
-            method: form.method,
-            body: formData
-        })
-            .then(response => response.text())
-            .then(data => {
-                if (data == 'success') {
-
-                    uploadIndicator.text = 'Successfully updated product. Refresh to see changes.'
-                    uploadIndicator.setAction(new SuopSnack.Action('Refresh', () => window.location = window.location))
-                } else {
-                    uploadIndicator.text = 'Error: ' + data
-                }
-
-            })
-            .catch(error => {
-                uploadIndicator.text = 'Error: ' + error
-                console.error(error)
-            })
-        editProductPopup.hideThenDelete()
-
-    })
-
-    editProductPopup.showPopup()
-}
-
-function imageForm() {
-    var formPopup = createBaseFormPopup()
-
-    //make the form with input boxes
-    const form = document.createElement('form')
-    form.innerHTML = `
-        <div><h1>Upload Images</h1></div>
-        <span class="text-input">
-            <input type="file" name="Images" multiple="multiple" accept=".png, .jpg, .jpeg, .webp" required/>
-            <i class="warning">Note: make sure only trusted users have access to this page, as uploads are not validated beyond extension.</i>
-        </span>
-        <button type="submit" class="btn btn-default">Register</button>
-    `
-    form.enctype = 'multipart/form-data'
-    form.classList.add('create-product-form')
-    form.method = 'post'
-    formPopup.contentNode.append(form)
+                break
+        }
+    }
+    const form = createFormNode()
+    
 
 
-    const submitUrl = window.location.origin + '/api/images'
 
     //handle form submission
     form.addEventListener('submit', e => {
         e.preventDefault() // Prevent the form from submitting normally
 
         const formData = new FormData(form); // Get the form data
-        var uploadIndicator = SuopSnack.add('Uploading image...', Infinity)
+        //on submisison, depending on the mode
+        submitStart()
 
-        fetch(submitUrl, {
+        fetch(form.submitUrl, {
             method: form.method,//todo refactor to reuse this function for all forms
             body: formData
         })
             .then(response => response.text())
             .then(data => {
-                if (JSON.parse(data).length > 0) {
-
-                    uploadIndicator.text = `Successfully uploaded ${JSON.parse(data).length} image${JSON.parse(data).length == 1 ? '' : 's'}. Refresh to see changes.`
-                    uploadIndicator.setAction(new SuopSnack.Action('Refresh', () => window.location = window.location))
+                //handle response, depending on the mode
+                let parsedData = JSON.parse(data)
+                console.log(parsedData)
+                if (parsedData.success) {
+                    handleResponse(parsedData)
                 } else {
-                    uploadIndicator.text = 'Error: ' + data
+                    handleFailure(parsedData)
                 }
+
 
             })
             .catch(error => {
-                uploadIndicator.text = 'Error: ' + error
+                //handle failure, depending on the mode
+                handleFailure(error)
             })
         formPopup.hideThenDelete()
 
     })
 
     formPopup.showPopup()
-}
-
-function createBaseFormPopup() {
-    return new SuopPopup(`
-        <style>
-            .create-product-form {
-                padding: 10px;
-                border-radius: 10px;
-                background-color: white;
-            }
-            
-        </style>
-    `)
 }
