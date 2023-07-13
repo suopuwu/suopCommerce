@@ -35,11 +35,11 @@ namespace suopCommerce.Models
         public string? Category { get; set; }
         public double Price { get; set; }
 
-        public string[] Extras { get; set; } = new string[0];
-        public string[] Tags { get; set; } = new string[0];
+        public string[] Extras { get; set; } = Array.Empty<string>();
+        public string[] Tags { get; set; } = Array.Empty<string>();
 
-        public int[] Addons { get; set; } = new int[0];
-        public int[] Images { get; set; } = new int[0];
+        public int[] Addons { get; set; } = Array.Empty<int>();
+        public int[] Images { get; set; } = Array.Empty<int>();
 
     }
     public class Image

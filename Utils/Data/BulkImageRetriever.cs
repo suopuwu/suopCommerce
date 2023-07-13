@@ -9,7 +9,7 @@ namespace SuopCommerce.Utils.Data
             if(idList == null || idList.Length == 0)
             {
                 return Array.Empty<Image?>();
-            }
+            }//todo add pagination for products and such to avoid overloading the database
             using var db = new StoreContext();
             List<Image?> returnList = new();
             foreach(int id in idList)

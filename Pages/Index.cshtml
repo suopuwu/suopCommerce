@@ -5,18 +5,14 @@
 }
 
 <div class="text-center">
-    <h1>@Model.itemCount products</h1>
     <div class="product-grid">
         @foreach (var product in Model.products)
         {
-            <div class="product-grid-item" onclick="window.location.pathname = 'products/@product.Id'">
-                @foreach (var image in product.Images)
-                {
-                    <img src="@image">
-                }
-
-                <p>@product.Name</p>
-                <p>@product.Price</p>
+            if (Array.IndexOf(product.Extras, "hidden") != -1) continue;
+            <div class="product-grid-tile" onclick="window.location.pathname = 'products/@product.Id'">
+                <span class="shadow"></span>
+                <span class="background-image" style="background-image: url('@await Model.GetImageUrlAsync(product.Images.FirstOrDefault())')"></span>
+                <span class="title">@product.Name</span>
             </div>
         }
     </div>

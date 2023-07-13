@@ -168,10 +168,14 @@ class SuopPopup {
         <div class="suop-popup-content">${this.content}</div>
       </div>
 	    `
+        this.node.lastMouseDownTarget = this.node
+        this.node.addEventListener('mousedown', (e) => {
+            this.node.lastMouseDownTarget = e.target
+        })
         this.node.onclick = (e) => {
             if (
-                e.target.id == this.id ||
-                e.target.classList.contains('suop-popup-close-button')
+                (e.target.id == this.id || e.target.classList.contains('suop-popup-close-button')) &&
+                (this.node.lastMouseDownTarget.id == this.id || this.node.lastMouseDownTarget.classList.contains('suop-popup-close-button'))
             ) {
                 if (this.#options.floating) {
                     return

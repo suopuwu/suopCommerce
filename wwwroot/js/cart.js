@@ -45,19 +45,24 @@ class Cart {
             hoverCart.toggle()
             return hoverCart
         }
-        function fillHoverCart(popup) {
+        async function fillHoverCart(popup) {
             let contentContainer = popup.node.querySelector('.suop-popup-content')
             if (contentContainer == null) return;
             for (let item of window.suopCart.items) {
+                //immediately add the element to preserve the order in which the products were added
                 let itemNode = document.createElement('span')
                 itemNode.classList.add('shopping-popup-item')
                 contentContainer.append(itemNode)
-                getProduct(item.id).then((itemInfo) => {
+
+                //add data to the cart items
+                getProduct(item.id).then(async (itemInfo) => {
                     itemNode.innerHTML = `
-                        ${(() => {
-                            let html = ''
-                            for (let image of itemInfo.Images) {
-                                html += `<img src="${image}">`
+                        ${await (async () => {
+                        let html = ''
+                            //add each image, waiting for each one to load consecutively
+                        for (let image of itemInfo.Images) {
+                            let tempImage = await getImage(image)
+                            html += `<img src="${tempImage.Url}">`
                             }
                             return html
                         })()}
@@ -154,9 +159,11 @@ class CartItem {
     id = 0
     quantity = 1
     children = []
-    constructor(id = 0, quantity = 1, children = []) {
+    customization = ''
+    constructor(id = 0, quantity = 1, children = [], customization = '') {
         this.id = id
         this.quantity = quantity
         this.children = children
+        this.customization = customization
     }
 }

@@ -22,7 +22,6 @@ namespace SuopCommerce.Utils.Api
 
             foreach (var CartItem in cart)
             {
-                if (CartItem.Id == null) continue;
                 var item = await db.Products.FindAsync(CartItem.Id);
                 if (item == null) continue;
                 lineItems.Add(new SessionLineItemOptions

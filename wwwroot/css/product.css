@@ -1,3 +1,59 @@
-main > img {
+@media (orientation: landscape) {
+  .product-page-wrapper {
+    padding: 40px 40px 0 40px;
+    gap: 40px;
+    display: grid;
+    grid-template-columns: 1fr 450px;
+    align-items: start;
+  }
+}
+
+.product-image-gallery {
+  min-width: 100%;
+}
+@media (orientation: landscape) {
+  .product-image-gallery {
+    top: 40px;
+  }
+}
+.product-image-gallery > img {
+  height: 100px;
+}
+.product-image-gallery > img:first-of-type {
   max-width: 100%;
+  height: auto;
+}
+
+.product-info {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+}
+.product-info > h1 {
+  letter-spacing: -1.5px;
+}
+.product-info > p {
+  line-height: 1.5em;
+}
+
+.product-addon {
+  display: inline-flex;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0);
+  outline: rgba(0, 0, 0, 0.3137254902) solid 1px;
+  transition: all 0.2s;
+}
+.product-addon:has(input:checked) {
+  background-color: rgba(0, 0, 0, 0.1882352941);
+  outline: rgba(0, 0, 0, 0) solid 1px;
+}
+.product-addon > .addon-image {
+  max-height: 6em;
+}
+.product-addon > .addon-text {
+  min-height: 4em;
+  padding: 1em 1em 0 1em;
+}
+.product-addon > input {
+  display: none;
 }/*# sourceMappingURL=product.css.map */

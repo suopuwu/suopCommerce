@@ -24,8 +24,8 @@ namespace SuopCommerce.Pages.Admin
         }
         public void OnGet()
         {
-            products = db.Products.ToList();
-            images = db.Images.ToList();
+            products = db.Products.OrderBy(e => e.Id).ToList();
+            images = db.Images.OrderBy(e => e.Id).ToList();
             nextId = Uuid.GetUuid();
         }
     }

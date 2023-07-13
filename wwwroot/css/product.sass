@@ -1,3 +1,47 @@
+$padding: 40px
 
-main > img
-  max-width: 100%
+.product-page-wrapper
+  @media (orientation: landscape)
+    padding: $padding $padding 0 $padding
+    gap: $padding
+    display: grid
+    grid-template-columns: 1fr 450px
+    align-items: start
+
+.product-image-gallery
+  min-width: 100%
+
+  @media (orientation: landscape)
+    top: $padding
+  > img
+    height: 100px
+    &:first-of-type
+      max-width: 100%
+      height: auto
+
+.product-info
+  display: flex
+  flex-flow: column
+  align-items: flex-start
+  > h1
+    letter-spacing: -1.5px
+  > p
+    line-height: 1.5em
+
+.product-addon
+  $addon-padding: 1em
+  display: inline-flex
+  cursor: pointer
+  background-color: #00000000
+  outline: #00000050 solid 1px
+  transition: all 0.2s
+  &:has(input:checked)
+    background-color: #00000030
+    outline: #00000000 solid 1px
+  > .addon-image
+    max-height: 6em
+  > .addon-text
+    min-height: 4em
+    padding: $addon-padding $addon-padding 0 $addon-padding
+  > input
+    display: none

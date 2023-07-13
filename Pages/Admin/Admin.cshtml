@@ -2,7 +2,7 @@
 @model AdminModel
 @{
 }
-
+<div class="page-padding-sides">
 <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 <p>@ViewData["debug"]</p>
 <div class="admin-list">
@@ -38,7 +38,7 @@
                     <span>Has null images</span>
                 }
             }
-
+            <p>@product.Id</p>
             <p>@product.Name</p>
             <p>@product.Price</p>
             <span class="spacer"></span>
@@ -57,6 +57,7 @@
     {
         <div class="admin-list-item" id="image_@image.Id">
             <img src="@image.Url" alt="" />
+            <p>@image.Id</p>
             <p class="admin-description">@image.Description</p>
 
             <span class="spacer"></span>
@@ -65,4 +66,6 @@
         </div>
     }
 </div>
+</div>
+
 <script src="/js/admin.js" asp-append-version="true" defer></script>

@@ -4,11 +4,53 @@
 }
 <link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
 
-<h1>@Model.product.Name</h1>
-@foreach (var image in Model.imageIds)
-{
-    <img src="@image">
-}
-<p>@Model.product.Description</p>
-<p>@Model.debug</p>
-<button onclick="suopCart.add(new CartItem('@Model.product.Id', 1))">Buy now</button>
+<div class="product-page-wrapper">
+    <div class="product-image-gallery"> 
+        @foreach (var image in Model.images)
+        {
+            <span>@image.Description</span>
+            <img src="@image.Url">
+        }
+        @if(Model.images.Length == 0)
+        {
+            <span class="placeholder-image"></span>
+        }
+    </div>
+    <div class="product-info">
+
+        <h1>@Model.product.Name</h1>
+        <p>@Model.product.Description</p>
+        <p>@Model.debug</p>
+
+        @foreach (var addonId in Model.product.Addons)
+        {
+            var addon = Model.db.Products.Find(addonId);
+            if(addon == null) continue;
+            var addonImageUrl = await Model.GetImageUrlAsync(addon.Images.FirstOrDefault());
+
+            <label class="product-addon" onclick="window.suopProduct.toggleAddon(@addon.Id, @addon.Price)">
+                <img src="@addonImageUrl" class="addon-image"/>
+                <span class="addon-text">
+                    <span>
+                        <b>@addon.Name</b> (+ <span class="price">@Model.formatMoney(addon.Price)</span>)
+                    </span>
+                    <br>
+                    <span>@addon.Description</span>
+                </span>
+
+                <input type="checkbox" id="addon-@addon.Id" />
+
+            </label>
+        }
+        <h1 id="final-price" class="">$@Model.formatMoney(Model.product.Price)</h1>
+        <button onclick="suopCart.add(new CartItem('@Model.product.Id', 1))">Buy now</button>
+        <script src="/js/product.js" asp-append-version="true" ></script>
+
+        <script defer>
+            addEventListener('DOMContentLoaded', () => {
+                window.suopProduct.displayPrice = @Model.product.Price
+            });
+        </script>
+    </div>
+
+</div>

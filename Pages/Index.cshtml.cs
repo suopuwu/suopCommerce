@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using suopCommerce.Models;
+using SuopCommerce.Utils.Data;
 
 namespace SuopCommerce.Pages
 {
-    public class IndexModel : PageModel
+    public class IndexModel : ExtendedPageModel
     {
         //private readonly ILogger<IndexModel> _logger;
 
@@ -12,14 +13,13 @@ namespace SuopCommerce.Pages
         //{
         //    _logger = logger;
         //}
-
-        private StoreContext db { get; set; } = new();
-        public int itemCount = 0;
+        //todo look into making it preload images in the cart
         public List<Product> products = new();
+
+        
         public void OnGet()
         {
-            products = db.Products.ToList();
-            itemCount = db.Products.Count();
+            products = db.Products.OrderBy(e => e.Id).ToList();
         }
     }
 }

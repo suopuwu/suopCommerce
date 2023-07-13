@@ -47,7 +47,7 @@ app.MapPost("/api/products", async (HttpContext context) =>
                     context.Request.Form["Category"]!,
                     double.Parse(context.Request.Form["Price"]!),
                     ((string?)context.Request.Form["Tags"] ?? "").Replace(" ", "").Split(",").ToArray(),
-                    ((string?)context.Request.Form["Extras"] ?? "").Replace(" ", "").Split(",").ToArray(),
+                    ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(extra => extra.Trim()).ToArray(),
                     ((string?)context.Request.Form["Addons"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray(),
                     ((string?)context.Request.Form["Images"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray()
                     );
@@ -61,12 +61,12 @@ app.MapPost("/api/products/{id}", async (HttpContext context, int id) =>
                     context.Request.Form["Category"]!,
                     double.Parse(context.Request.Form["Price"]!),
                     ((string?)context.Request.Form["Tags"] ?? "").Replace(" ", "").Split(",").ToArray(),
-                    ((string?)context.Request.Form["Extras"] ?? "").Replace(" ", "").Split(",").ToArray(),
+                    ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(extra => extra.Trim()).ToArray(),
                     ((string?)context.Request.Form["Addons"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray(),
                     ((string?)context.Request.Form["Images"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray(),
                     id
                     );
-});
+});//todo global images and text, ie color palette 
 
 app.MapPost("/api/checkout", async (HttpContext context) =>
 {

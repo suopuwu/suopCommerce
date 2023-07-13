@@ -115,13 +115,13 @@ function popupForm(mode, data = {}) {
                 break
             case formModes.createProduct:
             case formModes.editProduct:
-                form.innerHTML = `<div><h1>Create Product</h1></div>`
+                form.innerHTML = `<div><h1>${mode == formModes.createProduct ? 'Create' : 'Edit'} Product</h1></div>`
                 createInputNode('Name', 'Name', data.name ?? 'Example name')
                 createInputNode('Description', 'Description', data.description ?? 'Example description')
                 createInputNode('Category', 'Category', data.category ?? '', false)
                 createInputNode('Price', 'Price', data.price ?? '0.5', true, 'number')
                 createInputNode('Tags', 'Tags', data.tags ?? '', false)
-                createInputNode('Addons', 'Addons', data.addons ?? '', false)
+                createInputNode('Addons(only numbers, spaces, and commas)', 'Addons', data.addons ?? '', false)
                 createInputNode('Extras', 'Extras', data.extras ?? '', false)
                 createInputNode('Images', 'Images', data.images ?? '', false)
                 form.method = 'post'
@@ -136,7 +136,7 @@ function popupForm(mode, data = {}) {
         form.enctype = 'multipart/form-data'
         form.classList.add('create-product-form')
         return form
-    }
+    }//todo make ui to choose products or images
     function submitStart() {
         switch (mode) {
             case formModes.uploadImage:
@@ -152,7 +152,7 @@ function popupForm(mode, data = {}) {
                 infoSnackbar = SuopSnack.add('Editing product...', Infinity)
                 break
         }
-    }
+    }//todo move the rest of the api to a proper restful api
 
     function handleResponse(response) {
 
