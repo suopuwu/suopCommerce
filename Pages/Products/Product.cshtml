@@ -1,4 +1,5 @@
 ﻿@page "/products/{id}"
+@using SuopCommerce.Models
 @model ProductModel
 @{
 }
@@ -43,9 +44,24 @@
             </label>
         }
 
-        @foreach (var extra in Model.product.Extras)
+        @foreach (var extraString in Model.product.Extras)
         {
+            var extra = Model.ParseExtra(extraString);
             
+            switch (extra.Type)
+            {
+                case Extras.Types.PerLetter:
+                    <div>
+                        <b>@extra.Text</b> (+ $@Model.FormatMoney(extra.Cost) per letter)<br>
+                        <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)"/>
+                    </div>
+                    break;
+
+                case Extras.Types.Invalid:
+                default:
+                    <span><h1>Invalid extra:</h1> @extra.Text</span>    
+                break;
+            }
         }
         <h1 id="final-price" class="">$@Model.FormatMoney(Model.product.Price)</h1>
         <button class="rounded-square-button" onclick="suopCart.add(new CartItem('@Model.product.Id', 1))">Buy now</button>
@@ -53,7 +69,7 @@
 
         <script defer>
             addEventListener('DOMContentLoaded', () => {
-                window.suopProduct.displayPrice = @Model.product.Price
+                window.suopProduct.basePrice = @Model.product.Price
             });
         </script>
     </div>

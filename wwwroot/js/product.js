@@ -7,7 +7,8 @@ addEventListener('DOMContentLoaded', () => {
     });
     let counter = 0
     window.suopProduct = {
-        displayPrice: 0,
+        priceModifiers: new Map(),
+        basePrice: 0,
         addons: new Set(),
         customization: {},
         toggleAddon(id, price) {
@@ -17,22 +18,30 @@ addEventListener('DOMContentLoaded', () => {
             if (counter % 2 != 0) {
                 return;
             }
-            console.log(this.displayPrice)
             if (this.addons.has(id)) {
-                this.displayPrice -= price
+                this.priceModifiers.delete(id)
                 this.addons.delete(id)
             } else {
-                this.displayPrice += price
+
+                this.priceModifiers.set(id, price)
                 this.addons.add(id)
             }
-            console.log(this.displayPrice)
-
             this.refreshPrice()
+        },
+        setPerLetter(text, id, cost) {
+            this.customization[id] = text
+            this.priceModifiers.set('id', cost * text.length)
+            this.refreshPrice()
+
         },
 
         refreshPrice() {
-            priceNode.innerHTML = formatter.format(this.displayPrice)
-        }
+            let priceModifierTotal = 0;
+            for (let price of this.priceModifiers) {
+                priceModifierTotal += price[1]
+            }
+            priceNode.innerHTML = formatter.format(this.basePrice + priceModifierTotal)
+        },
     }
 
 });

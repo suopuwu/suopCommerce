@@ -209,7 +209,7 @@ function popupForm(mode, data = {}) {
         element: document.getElementById('Description' + idNumber),
         forceSync: true,
         toolbar: ['bold', 'italic', 'heading-bigger', 'heading-smaller', 'strikethrough', '|', 'quote', 'code', 'unordered-list', 'ordered-list', '|', 'undo', 'redo'],
-        initialValue: data.description
+        initialValue: data.description,
     })
 
     //todo make it so the frontend can handle ` characters

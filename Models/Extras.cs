@@ -4,10 +4,19 @@ namespace SuopCommerce.Models
 {
     public static class Extras
     {
-        public record Extra();
-        public record PerLetter(string Title, string Id, double Cost): Extra;
+        public enum Types
+        {
+            Invalid,
+            PerLetter
+        }
 
-        public record InvalidExtra(string message): Extra;
+        public record Extra(
+            Types Type = Types.Invalid,
+            string Text = "",
+            string Id = "",
+            double Cost = 0
+            );
+
         public static Extra ParseExtra(string extraString)
         {
             void validateExtraSections(string[] parts, int length)
@@ -22,14 +31,14 @@ namespace SuopCommerce.Models
                 {//per letter:<Display text>:<id>:<Cost per letter>
                     case "per letter":
                         validateExtraSections(parts, 4);
-                        return new PerLetter(parts[1], parts[2], double.Parse(parts[3]));
+                        return new Extra(Type: Types.PerLetter, Text: parts[1], Id: parts[2], Cost: Double.Parse(parts[3]));
                     default:
                         throw new Exception(parts[0] + " is not a valid extra type");
                 }
             }
             catch (Exception e)
             {
-                return new InvalidExtra(e.Message);
+                return new Extra(Type: Types.PerLetter, Text: e.Message);
             }
         }
     }

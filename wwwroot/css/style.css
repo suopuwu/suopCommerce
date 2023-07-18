@@ -139,7 +139,7 @@ form {
   display: flex;
   flex-flow: column;
 }
-form > * {
+form > *:not(:last-child) {
   margin-bottom: 20px;
 }
 

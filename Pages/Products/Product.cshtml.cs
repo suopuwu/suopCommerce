@@ -1,4 +1,5 @@
 using suopCommerce.Models;
+using SuopCommerce.Models;
 using SuopCommerce.Utils.Data;
 
 namespace SuopCommerce.Pages.Products
@@ -9,6 +10,13 @@ namespace SuopCommerce.Pages.Products
         public Image[] images = Array.Empty<Image>();
         public bool redirect = false;
         public string debug = "";
+
+
+        public enum extraTypes { }
+        public Extras.Extra ParseExtra(string extraString)
+        {
+            return Extras.ParseExtra(extraString);
+        } 
         public async Task OnGetAsync()
         {
             product = await db.Products.FindAsync(int.Parse(RouteData.Values["id"]!.ToString()!));
