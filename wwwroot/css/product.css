@@ -32,7 +32,8 @@
 .product-info > h1 {
   letter-spacing: -1.5px;
 }
-.product-info > p {
+
+.product-description {
   line-height: 1.5em;
 }
 
@@ -44,8 +45,8 @@
   transition: all 0.2s;
 }
 .product-addon:has(input:checked) {
+  outline: rgba(0, 0, 0, 0.4392156863) solid 1px;
   background-color: rgba(0, 0, 0, 0.1882352941);
-  outline: rgba(0, 0, 0, 0) solid 1px;
 }
 .product-addon > .addon-image {
   max-height: 6em;

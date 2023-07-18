@@ -42,7 +42,7 @@
             <p>@product.Name</p>
             <p>@product.Price</p>
             <span class="spacer"></span>
-            <button class="product-edit-item" onclick="popupForm(formModes.editProduct, {id: '@product.Id', name: `@product.Name`, description: `@product.Description`, category: `@product.Category`, price: `@product.Price`,tags: `@string.Join(", ", product.Tags ?? new string[] {})`, extras:`@string.Join(", ", product.Extras ?? new string[] {})`, addons:`@string.Join(", ", product.Addons ?? new int[] {})`, images:`@string.Join(", ", product.Images ?? new int[] {})`})">📝</button>
+            <button class="product-edit-item" onclick="popupForm(formModes.editProduct, {id: '@product.Id', name: `@product.Name`, description: `@product.Description.Replace("`", "\\`")`, category: `@product.Category`, price: `@product.Price`,tags: `@string.Join(", ", product.Tags ?? new string[] {})`, extras:`@string.Join(", ", product.Extras ?? new string[] {})`, addons:`@string.Join(", ", product.Addons ?? new int[] {})`, images:`@string.Join(", ", product.Images ?? new int[] {})`})">📝</button>
             <button class="product-delete-item" onclick="deleteProduct('@product.Id')">✖️</button>
         </div>
     }
@@ -67,5 +67,6 @@
     }
 </div>
 </div>
-
+<script src="~/lib/easymde.min.js" defer></script>
 <script src="/js/admin.js" asp-append-version="true" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">

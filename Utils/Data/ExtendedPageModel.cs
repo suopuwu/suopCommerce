@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Markdig;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using suopCommerce.Models;
 
 namespace SuopCommerce.Utils.Data
@@ -16,6 +17,11 @@ namespace SuopCommerce.Utils.Data
         public async Task<Image[]> GetImageArrayFromIdsAsync(int[] list) => await BulkImageRetriever.FromListAsync(list);
 #pragma warning restore CS8619
 
-        public string formatMoney(double d) => MoneyFormatter.formatDouble(d);
+        public string FormatMoney(double d) => MoneyFormatter.formatDouble(d);
+
+        public string MarkdownToHtml(string markdown)
+        {
+            return Markdown.ToHtml(markdown);
+        }
     }
 }

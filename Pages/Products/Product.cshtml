@@ -19,7 +19,7 @@
     <div class="product-info">
 
         <h1>@Model.product.Name</h1>
-        <p>@Model.product.Description</p>
+        <div class="product-description">@Html.Raw(Model.MarkdownToHtml(Model.product.Description))</div>
         <p>@Model.debug</p>
 
         @foreach (var addonId in Model.product.Addons)
@@ -32,7 +32,7 @@
                 <img src="@addonImageUrl" class="addon-image"/>
                 <span class="addon-text">
                     <span>
-                        <b>@addon.Name</b> (+ <span class="price">@Model.formatMoney(addon.Price)</span>)
+                        <b>@addon.Name</b> (+ <span class="price">@Model.FormatMoney(addon.Price)</span>)
                     </span>
                     <br>
                     <span>@addon.Description</span>
@@ -42,8 +42,13 @@
 
             </label>
         }
-        <h1 id="final-price" class="">$@Model.formatMoney(Model.product.Price)</h1>
-        <button onclick="suopCart.add(new CartItem('@Model.product.Id', 1))">Buy now</button>
+
+        @foreach (var extra in Model.product.Extras)
+        {
+            
+        }
+        <h1 id="final-price" class="">$@Model.FormatMoney(Model.product.Price)</h1>
+        <button class="rounded-square-button" onclick="suopCart.add(new CartItem('@Model.product.Id', 1))">Buy now</button>
         <script src="/js/product.js" asp-append-version="true" ></script>
 
         <script defer>

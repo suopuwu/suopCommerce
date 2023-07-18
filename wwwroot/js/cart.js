@@ -73,7 +73,7 @@ class Cart {
             }
             let checkoutButton = document.createElement('button')
             contentContainer.append(checkoutButton)
-            checkoutButton.outerHTML = '<button id="checkout-button" onclick="window.suopCart.submitCart()">Checkout</button>'
+            checkoutButton.outerHTML = '<button id="checkout-button" class="rounded-square-button" onclick="window.suopCart.submitCart()">Checkout</button>'
             //todo make the back button take you to whatever prior page.
         }
 

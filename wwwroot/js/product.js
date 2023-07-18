@@ -9,7 +9,7 @@ addEventListener('DOMContentLoaded', () => {
     window.suopProduct = {
         displayPrice: 0,
         addons: new Set(),
-        customization: '',
+        customization: {},
         toggleAddon(id, price) {
             //onclick events on labels trigger twice
             counter++

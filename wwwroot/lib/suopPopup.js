@@ -78,11 +78,14 @@ class SuopPopup {
 				width: 100%;
 				height: 100%;
 				top: 0;
+                padding: 10vh 0 10vh 0;
         left: 0;
 				cursor: pointer;
         display: flex;
 				justify-content: center;
-				align-items: center;
+				align-items: baseline;
+                overflow-y: scroll;
+                scrollbar-width: none;
         `
                 : `
         position: absolute;
@@ -93,6 +96,10 @@ class SuopPopup {
         z-index: ${this.level}
 			}
 
+            #${this.id}::-webkit-scrollbar {
+                display: none;
+            }
+
       .suop-popup-close-button {
         position: absolute;
         top: 0;
@@ -102,11 +109,11 @@ class SuopPopup {
       }
 
       #${this.id} .suop-popup-wrapper {
+        margin: auto;
         cursor: auto;
         box-shadow: ${this.#options.shadow ?? 'none'};
         @media(orientation: landscape) {
           max-width: 80vw;
-				  max-height: 80vh;
         }
         position: relative;
         top: ${this.#options.y}px;

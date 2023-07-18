@@ -1,4 +1,12 @@
-﻿function retrieveSetting(name) {
+﻿let suopCounter = function() {
+    _counter = 0;
+    return function () {
+        _counter++
+        return _counter
+    }
+}()
+
+function retrieveSetting(name) {
     switch (name) {
         case 'confirm-deletion':
             return document.getElementById('confirm-deletion-checkbox').checked
@@ -65,6 +73,7 @@ const formModes = {
     editProduct: 3
 }
 function popupForm(mode, data = {}) {
+    let idNumber = suopCounter();
     if (mode == null) {
         SuopSnack.add('Error: popup form made without a mode specified.')
         return
@@ -75,13 +84,18 @@ function popupForm(mode, data = {}) {
     function createFormNode() {
         const form = document.createElement('form')
         formPopup.contentNode.append(form)
+
+
+        //creates the node containing the title and input elements. Returns the input node.
         function createInputNode(text, name, value = '', required = true, type = 'text') {
-            var wrapperNode = document.createElement('span')
+            let wrapperNode = document.createElement('span')
             form.append(wrapperNode)
             wrapperNode.innerHTML = text
             wrapperNode.classList.add('text-input')
-            var inputNode = document.createElement('input')
+
+            let inputNode = document.createElement('input')
             wrapperNode.append(inputNode)
+            inputNode.id = name + idNumber;
 
             inputNode.type = type
             if (type == 'file') {
@@ -97,7 +111,8 @@ function popupForm(mode, data = {}) {
             if (type != 'file') {
                 inputNode.setAttribute('value', value)
             }
-            
+
+            return inputNode
         }
 
         switch (mode) {
@@ -117,7 +132,7 @@ function popupForm(mode, data = {}) {
             case formModes.editProduct:
                 form.innerHTML = `<div><h1>${mode == formModes.createProduct ? 'Create' : 'Edit'} Product</h1></div>`
                 createInputNode('Name', 'Name', data.name ?? 'Example name')
-                createInputNode('Description', 'Description', data.description ?? 'Example description')
+                descriptionNode = createInputNode('Description', 'Description', data.description ?? 'Example description')
                 createInputNode('Category', 'Category', data.category ?? '', false)
                 createInputNode('Price', 'Price', data.price ?? '0.5', true, 'number')
                 createInputNode('Tags', 'Tags', data.tags ?? '', false)
@@ -131,8 +146,8 @@ function popupForm(mode, data = {}) {
                 }
                 break
         }
-        form.innerHTML += '<button type="submit" class="btn btn-default">Submit</button>'
-        form.style.minWidth = '700px'
+        form.innerHTML += '<button type="submit" class="rounded-square-button">Submit</button>'
+        form.style.width = '700px'
         form.enctype = 'multipart/form-data'
         form.classList.add('create-product-form')
         return form
@@ -189,15 +204,27 @@ function popupForm(mode, data = {}) {
         }
     }
     const form = createFormNode()
-    
+    //change the description field to a markdown editor, then replace <br>s with newlines
+    let editor = new EasyMDE({
+        element: document.getElementById('Description' + idNumber),
+        forceSync: true,
+        toolbar: ['bold', 'italic', 'heading-bigger', 'heading-smaller', 'strikethrough', '|', 'quote', 'code', 'unordered-list', 'ordered-list', '|', 'undo', 'redo'],
+        initialValue: data.description
+    })
 
-
+    //todo make it so the frontend can handle ` characters
 
     //handle form submission
     form.addEventListener('submit', e => {
         e.preventDefault() // Prevent the form from submitting normally
 
         const formData = new FormData(form); // Get the form data
+
+        //reformat form
+        if (formData.has('Description')) {
+            formData.set('Description', editor.value())
+        }
+
         //on submisison, depending on the mode
         submitStart()
 
