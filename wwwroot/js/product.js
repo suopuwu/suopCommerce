@@ -9,6 +9,7 @@ addEventListener('DOMContentLoaded', () => {
     window.suopProduct = {
         priceModifiers: new Map(),
         basePrice: 0,
+        id: -1,
         addons: new Set(),
         customization: {},
         toggleAddon(id, price) {
@@ -28,9 +29,10 @@ addEventListener('DOMContentLoaded', () => {
             }
             this.refreshPrice()
         },
+        //todo make selected addons more obvious
         setPerLetter(text, id, cost) {
             this.customization[id] = text
-            this.priceModifiers.set('id', cost * text.length)
+            this.priceModifiers.set(id, cost * text.length)
             this.refreshPrice()
 
         },
@@ -42,6 +44,17 @@ addEventListener('DOMContentLoaded', () => {
             }
             priceNode.innerHTML = formatter.format(this.basePrice + priceModifierTotal)
         },
+
+        addToCart() {
+            //changes the product as it is currently configured into a more json readable form, then adds it to the cart.
+            let cartItem = new CartItem(this.id)
+            cartItem.customization = this.customization
+
+            for (let addonId of this.addons) {
+                cartItem.children.push(new CartItem(addonId, 1))
+            }
+            window.suopCart.add(cartItem)
+        }
     }
 
 });

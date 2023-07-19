@@ -23,6 +23,26 @@
         <div class="product-description">@Html.Raw(Model.MarkdownToHtml(Model.product.Description))</div>
         <p>@Model.debug</p>
 
+        @foreach (var extraString in Model.product.Extras)
+        {
+            var extra = Model.ParseExtra(extraString);
+
+            switch (extra.Type)
+            {
+                case Extras.Types.PerLetter:
+                    <div>
+                        <b>@extra.Text</b> (+ $@Model.FormatMoney(extra.Cost) per letter)<br>
+                        <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)" />
+                    </div>
+                    break;
+
+                case Extras.Types.Invalid:
+                default:
+                    <span><h1>Invalid extra:</h1> @extra.Text</span>
+                    break;
+            }
+        }
+
         @foreach (var addonId in Model.product.Addons)
         {
             var addon = Model.db.Products.Find(addonId);
@@ -44,32 +64,15 @@
             </label>
         }
 
-        @foreach (var extraString in Model.product.Extras)
-        {
-            var extra = Model.ParseExtra(extraString);
-            
-            switch (extra.Type)
-            {
-                case Extras.Types.PerLetter:
-                    <div>
-                        <b>@extra.Text</b> (+ $@Model.FormatMoney(extra.Cost) per letter)<br>
-                        <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)"/>
-                    </div>
-                    break;
-
-                case Extras.Types.Invalid:
-                default:
-                    <span><h1>Invalid extra:</h1> @extra.Text</span>    
-                break;
-            }
-        }
+        
         <h1 id="final-price" class="">$@Model.FormatMoney(Model.product.Price)</h1>
-        <button class="rounded-square-button" onclick="suopCart.add(new CartItem('@Model.product.Id', 1))">Buy now</button>
+        <button class="rounded-square-button" onclick="window.suopProduct.addToCart()">Buy now</button>
         <script src="/js/product.js" asp-append-version="true" ></script>
 
         <script defer>
             addEventListener('DOMContentLoaded', () => {
                 window.suopProduct.basePrice = @Model.product.Price
+                window.suopProduct.id = @Model.product.Id
             });
         </script>
     </div>

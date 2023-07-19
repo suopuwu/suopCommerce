@@ -159,8 +159,8 @@ class CartItem {
     id = 0
     quantity = 1
     children = []
-    customization = ''
-    constructor(id = 0, quantity = 1, children = [], customization = '') {
+    customization = {}
+    constructor(id = 0, quantity = 1, children = [], customization = {}) {
         this.id = id
         this.quantity = quantity
         this.children = children
