@@ -2,5 +2,5 @@
 
 namespace SuopCommerce.Models
 {
-    public record CartItem(int Id, int Quantity, CartItem[] Children, string Customization);
+    public record CartItem(int Id, int Quantity, CartItem[] Children, List<string[]> Customization);
 }

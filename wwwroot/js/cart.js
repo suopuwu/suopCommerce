@@ -144,13 +144,15 @@ class Cart {
             body: JSON.stringify(this.items)
         })
         .then(response => response.text())
-        .then(data => {
-
+            .then(data => {
+                let parsedData = JSON.parse(data)
+                if (!parsedData.success) {
+                    throw new Error(parsedData.message)
+                }
             window.location = JSON.parse(data)['Location']
         })
             .catch(error => {
                 stripeLoading.text = '<i style="color:red">Error:</i> ' + error
-            console.log(error)
         })
     }
 }
@@ -159,8 +161,8 @@ class CartItem {
     id = 0
     quantity = 1
     children = []
-    customization = {}
-    constructor(id = 0, quantity = 1, children = [], customization = {}) {
+    customization = []
+    constructor(id = 0, quantity = 1, children = [], customization = []) {
         this.id = id
         this.quantity = quantity
         this.children = children

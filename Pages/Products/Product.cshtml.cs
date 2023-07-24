@@ -19,13 +19,20 @@ namespace SuopCommerce.Pages.Products
         } 
         public async Task OnGetAsync()
         {
-            product = await db.Products.FindAsync(int.Parse(RouteData.Values["id"]!.ToString()!));
-            if(product == null)
+            try
+            {
+                product = await db.Products.FindAsync(int.Parse(RouteData.Values["id"]!.ToString()!));
+                if (product == null)
+                {
+                    HttpContext.Response.Redirect("/404");
+
+                }
+                images = await GetImageArrayFromIdsAsync(product.Images);
+            } catch (Exception ex)
             {
                 HttpContext.Response.Redirect("/404");
-
             }
-            images = await GetImageArrayFromIdsAsync(product.Images);
+            
         }
     }
 }

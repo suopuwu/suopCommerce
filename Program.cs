@@ -70,17 +70,24 @@ app.MapPost("/api/products/{id}", async (HttpContext context, int id) =>
 
 app.MapPost("/api/checkout", async (HttpContext context) =>
 {
-    using StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8);
-    string jsonData = await reader.ReadToEndAsync();
-    var parsedData = JsonConvert.DeserializeObject<CartItem[]>(jsonData);
-    if (parsedData == null)
+    try
     {
-        context.Response.StatusCode = 400;
-        return "Error: data is null";
-    }
-    var headers = context.Request.Headers;
+        using StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8);
+        string jsonData = await reader.ReadToEndAsync();
+        var parsedData = JsonConvert.DeserializeObject<CartItem[]>(jsonData);
+        if (parsedData == null)
+        {
+            context.Response.StatusCode = 400;
+            return JsonConvert.SerializeObject(new { success = false, message = "Error: data is null" });
+        }
+        var headers = context.Request.Headers;
 
-    return await PaymentIntentHandler.CreateAsync(parsedData, headers["successUrl"], headers["cancelUrl"]);
+        return await PaymentIntentHandler.CreateAsync(parsedData, headers["successUrl"], headers["cancelUrl"]);
+    } catch (Exception ex)
+    {
+        return JsonConvert.SerializeObject(new { success = false, message = ex.Message });
+
+    }
 });
 
 app.MapPost("/api/images", async (HttpContext context) =>

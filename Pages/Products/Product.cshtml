@@ -35,10 +35,17 @@
                         <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)" />
                     </div>
                     break;
-
+                case Extras.Types.TextField:
+                    <div>
+                        <b>@extra.Text</b><br>
+                        <textarea oninput="console.log(this.value)"></textarea>TODO MAKE THIS ACTUALLY ADD THE CUSTOMIZATION TO THE ORDER.
+                    </div>    
+                break;
                 case Extras.Types.Invalid:
-                default:
                     <span><h1>Invalid extra:</h1> @extra.Text</span>
+                    break;
+                default:
+                    <span><b>Extra type @extra.Type.ToString() has not yet been implemented.</b></span>
                     break;
             }
         }

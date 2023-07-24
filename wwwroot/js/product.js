@@ -11,7 +11,7 @@ addEventListener('DOMContentLoaded', () => {
         basePrice: 0,
         id: -1,
         addons: new Set(),
-        customization: {},
+        customization: new Map(),
         toggleAddon(id, price) {
             //onclick events on labels trigger twice
             counter++
@@ -31,11 +31,13 @@ addEventListener('DOMContentLoaded', () => {
         },
         //todo make selected addons more obvious
         setPerLetter(text, id, cost) {
-            this.customization[id] = text
+            this.customization.set(id, text)
             this.priceModifiers.set(id, cost * text.length)
             this.refreshPrice()
 
         },
+
+        set
 
         refreshPrice() {
             let priceModifierTotal = 0;
@@ -48,7 +50,9 @@ addEventListener('DOMContentLoaded', () => {
         addToCart() {
             //changes the product as it is currently configured into a more json readable form, then adds it to the cart.
             let cartItem = new CartItem(this.id)
-            cartItem.customization = this.customization
+            for (let field of this.customization) {
+                cartItem.customization.push(field)
+            }
 
             for (let addonId of this.addons) {
                 cartItem.children.push(new CartItem(addonId, 1))
