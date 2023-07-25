@@ -59,7 +59,7 @@ namespace SuopCommerce.Utils.Api
                 var chosenExtra = Extras.GetExtraFromIdInProduct(field[0], product);
                 switch (chosenExtra.Type)
                 {
-                    case Extras.Types.PerLetter:
+                    default:
                         description.Append(chosenExtra.Text).Append(": ").Append(field[1]).Append(", ");
                         break;
                     case Extras.Types.Invalid:

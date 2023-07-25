@@ -37,7 +37,11 @@ addEventListener('DOMContentLoaded', () => {
 
         },
 
-        set
+        setRadioOption(id, value, cost) {
+            this.customization.set(id, value)
+            this.priceModifiers.set(id, cost)
+            this.refreshPrice()
+        },
 
         refreshPrice() {
             let priceModifierTotal = 0;

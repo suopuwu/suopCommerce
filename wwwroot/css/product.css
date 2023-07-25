@@ -57,4 +57,31 @@
 }
 .product-addon > input {
   display: none;
+}
+
+.product-extra {
+  margin-bottom: 1em;
+}
+
+div:has(.extra-text-field) {
+  width: 100%;
+}
+
+.extra-text-field {
+  width: 100%;
+  min-height: 100px;
+  display: block;
+  outline: 1px black solid;
+}
+
+.extra-label {
+  outline: solid black 1px;
+  padding: 1em;
+  margin-top: 10px;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0);
+  transition: all 0.2s;
+}
+.extra-label:has(input:checked) {
+  background-color: rgba(0, 0, 0, 0.4039215686);
 }/*# sourceMappingURL=product.css.map */

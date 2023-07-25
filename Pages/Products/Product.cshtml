@@ -4,15 +4,16 @@
 @{
 }
 <link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
+<script src="/js/product.js" asp-append-version="true"></script>
 
 <div class="product-page-wrapper">
-    <div class="product-image-gallery"> 
+    <div class="product-image-gallery">
         @foreach (var image in Model.images)
         {
             <span>@image.Description</span>
             <img src="@image.Url">
         }
-        @if(Model.images.Length == 0)
+        @if (Model.images.Length == 0)
         {
             <span class="placeholder-image"></span>
         }
@@ -26,38 +27,62 @@
         @foreach (var extraString in Model.product.Extras)
         {
             var extra = Model.ParseExtra(extraString);
+            <div class="product-extra">
 
-            switch (extra.Type)
-            {
+                @switch (extra.Type)
+                {
                 case Extras.Types.PerLetter:
-                    <div>
-                        <b>@extra.Text</b> (+ $@Model.FormatMoney(extra.Cost) per letter)<br>
-                        <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)" />
-                    </div>
+
+                    <b>@extra.Text</b> <span>(+ $@Model.FormatMoney(extra.Cost) per letter)</span><br>
+                    <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)" />
                     break;
                 case Extras.Types.TextField:
-                    <div>
-                        <b>@extra.Text</b><br>
-                        <textarea oninput="console.log(this.value)"></textarea>TODO MAKE THIS ACTUALLY ADD THE CUSTOMIZATION TO THE ORDER.
-                    </div>    
-                break;
+                    <b>@extra.Text</b><br>
+                        <span contenteditable="true" class="extra-text-field" oninput="window.suopProduct.customization.set(`@extra.Id`, this.innerHTML)"></span>
+                        break;
+                    case Extras.Types.Radio:
+                        <div style="height: 2em"><b>@extra.Text</b></div>
+                        string radioChecked = "checked";
+                        //set the default value
+                        //todo gracefully handle when no value is passed for a required radio
+                        //todo make it handle text hints for the nots and handle the pricing values for radio buttons
+                        <script defer>
+                            addEventListener('DOMContentLoaded', () => {
+                                window.suopProduct.setRadioOption(`@extra.Id`, `@extra.RadioOptions!.First().Key`, @extra.RadioOptions!.First().Value)
+                            });
+                        </script>
+
+                        foreach(var radioOption in extra.RadioOptions!)
+                        {
+                            <span>
+                                <label 
+                                    class="extra-label" 
+                                    onclick="window.suopProduct.setRadioOption(`@extra.Id`, `@radioOption.Key`, @radioOption.Value)">@radioOption.Key
+                                    <input class="hidden" type="radio" name="@extra.Id" @radioChecked/>
+                                </label>
+                            </span>
+                                //check the first radio button
+                            radioChecked = string.Empty;
+                        }
+                    break;
                 case Extras.Types.Invalid:
-                    <span><h1>Invalid extra:</h1> @extra.Text</span>
+                    <h1>Invalid extra:</h1> @extra.Text
                     break;
                 default:
-                    <span><b>Extra type @extra.Type.ToString() has not yet been implemented.</b></span>
+                    <b>Extra type @extra.Type.ToString() has not yet been implemented.</b>
                     break;
-            }
+                }
+            </div>
         }
 
         @foreach (var addonId in Model.product.Addons)
         {
             var addon = Model.db.Products.Find(addonId);
-            if(addon == null) continue;
+            if (addon == null) continue;
             var addonImageUrl = await Model.GetImageUrlAsync(addon.Images.FirstOrDefault());
 
             <label class="product-addon" onclick="window.suopProduct.toggleAddon(@addon.Id, @addon.Price)">
-                <img src="@addonImageUrl" class="addon-image"/>
+                <img src="@addonImageUrl" class="addon-image" />
                 <span class="addon-text">
                     <span>
                         <b>@addon.Name</b> (+ <span class="price">@Model.FormatMoney(addon.Price)</span>)
@@ -71,16 +96,16 @@
             </label>
         }
 
-        
+
         <h1 id="final-price" class="">$@Model.FormatMoney(Model.product.Price)</h1>
         <button class="rounded-square-button" onclick="window.suopProduct.addToCart()">Buy now</button>
-        <script src="/js/product.js" asp-append-version="true" ></script>
 
         <script defer>
             addEventListener('DOMContentLoaded', () => {
                 window.suopProduct.basePrice = @Model.product.Price
-                window.suopProduct.id = @Model.product.Id
-            });
+                    window.suopProduct.id = @Model.product.Id
+                    window.suopProduct.refreshPrice()
+                        });
         </script>
     </div>
 

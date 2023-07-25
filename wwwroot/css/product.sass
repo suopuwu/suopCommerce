@@ -45,3 +45,25 @@ $padding: 40px
     padding: $addon-padding $addon-padding 0 $addon-padding
   > input
     display: none
+
+.product-extra
+  margin-bottom: 1em
+
+div:has(.extra-text-field)
+  width: 100%
+
+.extra-text-field
+  width: 100%
+  min-height: 100px
+  display: block
+  outline: 1px black solid
+
+.extra-label
+  outline: solid black 1px
+  padding: 1em
+  margin-top: 10px
+  cursor: pointer
+  background-color: #00000000
+  transition: all 0.2s
+  &:has(input:checked)
+    background-color: #00000067

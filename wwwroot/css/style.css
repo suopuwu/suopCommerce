@@ -227,4 +227,8 @@ input[type=text]:focus, input[type=number]:focus {
 
 .price::before {
   content: "$";
+}
+
+.hidden {
+  display: none;
 }/*# sourceMappingURL=style.css.map */
