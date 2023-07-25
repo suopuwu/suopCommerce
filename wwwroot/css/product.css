@@ -73,15 +73,22 @@ div:has(.extra-text-field) {
   display: block;
   outline: 1px black solid;
 }
+.extra-text-field:empty:before {
+  cursor: text;
+  color: rgba(0, 0, 0, 0.6784313725);
+}
 
-.extra-label {
+.extra-radio-wrapper {
+  display: flex;
+}
+
+.extra-radio {
   outline: solid black 1px;
   padding: 1em;
-  margin-top: 10px;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0);
-  transition: all 0.2s;
+  transition: background-color 0.2s;
 }
-.extra-label:has(input:checked) {
+.extra-radio:has(input:checked) {
   background-color: rgba(0, 0, 0, 0.4039215686);
 }/*# sourceMappingURL=product.css.map */

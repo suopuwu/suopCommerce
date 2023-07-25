@@ -37,33 +37,40 @@
                     <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)" />
                     break;
                 case Extras.Types.TextField:
+                //todo make the hint text below escape quotes
                     <b>@extra.Text</b><br>
-                        <span contenteditable="true" class="extra-text-field" oninput="window.suopProduct.customization.set(`@extra.Id`, this.innerHTML)"></span>
+                        <style>
+                            #@extra.Id:empty:before {
+                                content: "@extra.HintText";
+                            }
+                        </style>
+                        <span id="@extra.Id" contenteditable="true" class="extra-text-field" oninput="window.suopProduct.customization.set(`@extra.Id`, this.innerHTML)"></span>
                         break;
                     case Extras.Types.Radio:
-                        <div style="height: 2em"><b>@extra.Text</b></div>
+                        <div><b>@extra.Text</b></div> 
                         string radioChecked = "checked";
                         //set the default value
                         //todo gracefully handle when no value is passed for a required radio
                         //todo make it handle text hints for the nots and handle the pricing values for radio buttons
+                        //todo make it request the user's full address
                         <script defer>
                             addEventListener('DOMContentLoaded', () => {
                                 window.suopProduct.setRadioOption(`@extra.Id`, `@extra.RadioOptions!.First().Key`, @extra.RadioOptions!.First().Value)
                             });
                         </script>
-
-                        foreach(var radioOption in extra.RadioOptions!)
+                        <span class="extra-radio-wrapper">
+                        @foreach(var radioOption in extra.RadioOptions!)
                         {
-                            <span>
-                                <label 
-                                    class="extra-label" 
+                                <label
+                                    class="extra-radio" 
                                     onclick="window.suopProduct.setRadioOption(`@extra.Id`, `@radioOption.Key`, @radioOption.Value)">@radioOption.Key
                                     <input class="hidden" type="radio" name="@extra.Id" @radioChecked/>
                                 </label>
-                            </span>
                                 //check the first radio button
                             radioChecked = string.Empty;
                         }
+                        </span>
+
                     break;
                 case Extras.Types.Invalid:
                     <h1>Invalid extra:</h1> @extra.Text

@@ -57,13 +57,17 @@ div:has(.extra-text-field)
   min-height: 100px
   display: block
   outline: 1px black solid
+  &:empty:before
+    cursor: text
+    color: #000000ad
 
-.extra-label
+.extra-radio-wrapper
+  display: flex
+.extra-radio
   outline: solid black 1px
   padding: 1em
-  margin-top: 10px
   cursor: pointer
   background-color: #00000000
-  transition: all 0.2s
+  transition: background-color 0.2s
   &:has(input:checked)
     background-color: #00000067
