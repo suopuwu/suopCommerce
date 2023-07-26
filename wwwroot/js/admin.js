@@ -167,12 +167,6 @@ function popupForm(mode, data = {}) {
         createInputNode("Category", "Category", data.category ?? "", false);
         createInputNode("Price", "Price", data.price ?? "0.5", true, "number");
         createInputNode("Tags", "Tags", data.tags ?? "", false);
-        createInputNode(
-          "Addons(only numbers, spaces, and commas)",
-          "Addons",
-          data.addons ?? "",
-          false
-        );
         createInputNode("Extras", "Extras", data.extras ?? "", false);
         createInputNode("Images", "Images", data.images ?? "", false);
         form.method = "post";

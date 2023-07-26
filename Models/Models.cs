@@ -38,7 +38,6 @@ namespace suopCommerce.Models
         public string[] Extras { get; set; } = Array.Empty<string>();
         public string[] Tags { get; set; } = Array.Empty<string>();
 
-        public int[] Addons { get; set; } = Array.Empty<int>();
         public int[] Images { get; set; } = Array.Empty<int>();
 
     }

@@ -7,7 +7,7 @@ namespace SuopCommerce.Utils.Api
     public static class ProductDao
     {
         //updates a product if it exists, creates it otherwise
-        public static async Task<string> Set(string name, string description, string category, double price, string[] tags, string[] extras, int[] addOns, int[] images, int? id = null)
+        public static async Task<string> Set(string name, string description, string category, double price, string[] tags, string[] extras, int[] images, int? id = null)
         {
             StoreContext db = new();
 
@@ -34,7 +34,6 @@ namespace SuopCommerce.Utils.Api
             product.Price = price;
             product.Tags = tags;
             product.Extras = extras;
-            product.Addons = addOns;
             product.Images = images;
             //todo add better addon and extra creator.
 
