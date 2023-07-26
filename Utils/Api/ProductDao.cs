@@ -15,13 +15,16 @@ namespace SuopCommerce.Utils.Api
             if (id == null)
             {
                 product = new Product();
-            } else
+            }
+            else
             {
                 try
                 {
 
                     product = await db.Products.FindAsync(id) ?? throw new Exception("Product not found");
-                } catch(Exception e) {
+                }
+                catch (Exception e)
+                {
                     return JsonSerializer.Serialize(new { success = false, message = e.Message });
                 }
             }
@@ -33,8 +36,7 @@ namespace SuopCommerce.Utils.Api
             product.Extras = extras;
             product.Addons = addOns;
             product.Images = images;
-            //todo add tags, images, addons, category, just make sure that all fields are editable.
-            //todo make it remove metadata
+            //todo add better addon and extra creator.
 
             try
             {

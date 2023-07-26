@@ -46,7 +46,8 @@ namespace SuopCommerce.Utils.Api
                 string blobName = Uuid.GetUuid() + extension;
                 string blobUrl = $"{baseBlobUrl}/{containerName}/{blobName}";
                 BlobClient blobClient = containerClient.GetBlobClient(blobName);
-
+                //todo make images look better
+                //potentially make clicking an image fill out the purchase form with the same info.
                 using (var ms = new MemoryStream())
                 {
                     await file.CopyToAsync(ms);
@@ -59,6 +60,10 @@ namespace SuopCommerce.Utils.Api
                     };
                     await blobClient.SetHttpHeadersAsync(headers);
                 }
+                //clear metadata
+                var empty = new Dictionary<string, string>();
+                await blobClient.SetMetadataAsync(empty);
+                //todo make api calls more error resilient
                 Image tempImage = new();
                 tempImage.Url = blobUrl;
                 db.Images.Add(tempImage);

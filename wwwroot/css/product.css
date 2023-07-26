@@ -69,7 +69,7 @@ div:has(.extra-text-field) {
 
 .extra-text-field {
   width: 100%;
-  min-height: 100px;
+  min-height: 6em;
   display: block;
   outline: 1px black solid;
 }
@@ -83,6 +83,9 @@ div:has(.extra-text-field) {
 }
 
 .extra-radio {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
   outline: solid black 1px;
   padding: 1em;
   cursor: pointer;
@@ -90,5 +93,5 @@ div:has(.extra-text-field) {
   transition: background-color 0.2s;
 }
 .extra-radio:has(input:checked) {
-  background-color: rgba(0, 0, 0, 0.4039215686);
+  background-color: rgba(0, 0, 0, 0.2588235294);
 }/*# sourceMappingURL=product.css.map */

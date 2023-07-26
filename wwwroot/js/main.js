@@ -42,3 +42,12 @@ function confirmAction(text, callback, autoConfirm = false) {
     })
     confirmationPopup.toggle()
 }
+//todo Currently, a product whose price is edited will not update prices already in customers' carts. Decide whether this is worth adding or not. 
+//you could just make cookies expire every week or something to mitigate this issue.
+function formatPrice(price) {
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    })
+    return formatter.format(price)
+}

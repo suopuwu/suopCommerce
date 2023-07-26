@@ -22,7 +22,7 @@ class Cart {
         }
     }
 
-    #setHoverCarts() {
+    #setHoverCarts() {//todo add a cache to improve performance on retrieving images and products
         function showHoverCart(node) {
             node.suopCartShown = true
             //create the cart
@@ -73,7 +73,14 @@ class Cart {
             }
             let checkoutButton = document.createElement('button')
             contentContainer.append(checkoutButton)
-            checkoutButton.outerHTML = '<button id="checkout-button" class="rounded-square-button" onclick="window.suopCart.submitCart()">Checkout</button>'
+            let cartTotal = 0;
+            for (let item of window.suopCart.items) {
+                cartTotal += item.displayPrice
+            }
+            checkoutButton.outerHTML = `
+                <button id="checkout-button" class="rounded-square-button" onclick="window.suopCart.submitCart()">Checkout</button>
+                <span class="price">${cartTotal}</span>
+            `
             //todo make the back button take you to whatever prior page.
         }
 
@@ -162,6 +169,7 @@ class CartItem {
     quantity = 1
     children = []
     customization = []
+    displayPrice = 0
     constructor(id = 0, quantity = 1, children = [], customization = []) {
         this.id = id
         this.quantity = quantity

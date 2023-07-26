@@ -1,10 +1,6 @@
 
 addEventListener('DOMContentLoaded', () => {
     let priceNode = document.getElementById('final-price')
-    const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    });
     let counter = 0
     window.suopProduct = {
         priceModifiers: new Map(),
@@ -43,12 +39,16 @@ addEventListener('DOMContentLoaded', () => {
             this.refreshPrice()
         },
 
-        refreshPrice() {
+        getPriceTotal() {
             let priceModifierTotal = 0;
             for (let price of this.priceModifiers) {
                 priceModifierTotal += price[1]
             }
-            priceNode.innerHTML = formatter.format(this.basePrice + priceModifierTotal)
+            return this.basePrice + priceModifierTotal
+        },
+
+        refreshPrice() {
+            priceNode.innerHTML = formatPrice(this.getPriceTotal())
         },
 
         addToCart() {
@@ -61,6 +61,8 @@ addEventListener('DOMContentLoaded', () => {
             for (let addonId of this.addons) {
                 cartItem.children.push(new CartItem(addonId, 1))
             }
+            //this truly is just a display price. Modifying it will not change the price stripe charges.
+            cartItem.displayPrice = this.getPriceTotal()
             window.suopCart.add(cartItem)
         }
     }
