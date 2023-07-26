@@ -10,7 +10,8 @@ namespace SuopCommerce.Models
             Invalid,
             PerLetter,
             TextField,
-            Radio
+            Radio,
+            Addon
         }
 
         public record Extra(
@@ -54,6 +55,9 @@ namespace SuopCommerce.Models
                         if (radioOptions.Count == 0) throw new Exception("At least one radio option required, zero found");
                         
                         return new Extra(Type: Types.Radio, Id: parts[1], Text: parts[2], RadioOptions: radioOptions);
+                    case "addon":
+                        validateExtraSections(parts, 2);
+                        return new Extra(Type: Types.Addon, Id: parts[1]);
                     default:
                         throw new Exception(parts[0] + " is not a valid extra type");
                 }

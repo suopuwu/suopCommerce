@@ -31,24 +31,26 @@
 
                 @switch (extra.Type)
                 {
-                case Extras.Types.PerLetter:
-                    if(extra.Cost != 0)
-                    {
-                        <b>@extra.Text</b> <span>(+$@Model.FormatMoney(extra.Cost) per letter)</span><br>
-                    }
+                    case Extras.Types.PerLetter:
+                        if(extra.Cost != 0)
+                        {
+                            <b>@extra.Text</b> <span>(+$@Model.FormatMoney(extra.Cost) per letter)</span><br>
+                        }
 
-                    <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)" />
-                    break;
-                case Extras.Types.TextField:
-                //todo make the hint text below escape quotes
-                    <b>@extra.Text</b><br>
-                        <style>
-                            #@extra.Id:empty:before {
-                                content: "@extra.HintText";
-                            }
-                        </style>
-                        <span id="@extra.Id" contenteditable="true" class="extra-text-field" oninput="window.suopProduct.customization.set(`@extra.Id`, this.innerHTML)"></span>
+                        <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)" />
                         break;
+
+                    case Extras.Types.TextField:
+                    //todo make the hint text below escape quotes
+                        <b>@extra.Text</b><br>
+                            <style>
+                                #@extra.Id:empty:before {
+                                    content: "@extra.HintText";
+                                }
+                            </style>
+                            <span id="@extra.Id" contenteditable="true" class="extra-text-field" oninput="window.suopProduct.customization.set(`@extra.Id`, this.innerHTML)"></span>
+                            break;
+
                     case Extras.Types.Radio:
                         <div><b>@extra.Text</b></div> 
                         string radioChecked = "checked";
@@ -73,40 +75,41 @@
                             //check only the first radio button
                             radioChecked = string.Empty;
                         }
-                        </span>
+                            </span>
+                        break;
 
-                    break;
-                case Extras.Types.Invalid:
-                    <h1>Invalid extra:</h1> @extra.Text
-                    break;
-                default:
-                    <b>Extra type @extra.Type.ToString() has not yet been implemented.</b>
-                    break;
+                    case Extras.Types.Addon:
+                        var parsedId = -1;
+                        int.TryParse(extra.Id, out parsedId);
+                        var addon = Model.db.Products.Find(parsedId);
+                        if (addon == null) continue;
+                        var addonImageUrl = await Model.GetImageUrlAsync(addon.Images.FirstOrDefault());
+
+                        <label class="product-addon" onclick="window.suopProduct.toggleAddon(@addon.Id, @addon.Price)">
+                            <img src="@addonImageUrl" class="addon-image" />
+                            <span class="addon-text">
+                                <span>
+                                    <b>@addon.Name</b> (+ <span class="price">@Model.FormatMoney(addon.Price)</span>)
+                                </span>
+                                <br>
+                                <span>@addon.Description</span>
+                            </span>
+
+                            <input type="checkbox" id="addon-@addon.Id" />
+
+                        </label>
+                        break;
+
+                    default:
+                        <b>Extra type @extra.Type.ToString() has not yet been implemented.</b>
+                        break;
+
+                    case Extras.Types.Invalid:
+                        <h1>Invalid extra:</h1> @extra.Text
+                        break;
                 }
             </div>
         }
-
-        @foreach (var addonId in Model.product.Addons)
-        {
-            var addon = Model.db.Products.Find(addonId);
-            if (addon == null) continue;
-            var addonImageUrl = await Model.GetImageUrlAsync(addon.Images.FirstOrDefault());
-
-            <label class="product-addon" onclick="window.suopProduct.toggleAddon(@addon.Id, @addon.Price)">
-                <img src="@addonImageUrl" class="addon-image" />
-                <span class="addon-text">
-                    <span>
-                        <b>@addon.Name</b> (+ <span class="price">@Model.FormatMoney(addon.Price)</span>)
-                    </span>
-                    <br>
-                    <span>@addon.Description</span>
-                </span>
-
-                <input type="checkbox" id="addon-@addon.Id" />
-
-            </label>
-        }
-
 
         <h1 id="final-price" class="">$@Model.FormatMoney(Model.product.Price)</h1>
         <button class="rounded-square-button" onclick="window.suopProduct.addToCart()">Buy now</button>
