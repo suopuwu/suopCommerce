@@ -2,7 +2,7 @@ name: Build and deploy .NET Core application to Web App SuopCommerce202307281617
 on:
   push:
     branches:
-    - production
+    - master
 env:
   AZURE_WEBAPP_NAME: SuopCommerce20230728161714
   AZURE_WEBAPP_PACKAGE_PATH: .\published
