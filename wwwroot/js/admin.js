@@ -182,7 +182,8 @@ function popupForm(mode, data = {}) {
     form.enctype = "multipart/form-data";
     form.classList.add("create-product-form");
     return form;
-  } //todo make ui to choose products or images
+    } //todo make ui to choose products or images
+  //todo make checkout hover cart display money total correctly.
   function submitStart() {
     switch (mode) {
       case formModes.uploadImage:
@@ -287,7 +288,7 @@ function popupForm(mode, data = {}) {
     if (formData.has("Description")) {
       formData.set("Description", editor.value());
     }
-
+    //todo make images resize on mobile
     //on submisison, depending on the mode
     submitStart();
 

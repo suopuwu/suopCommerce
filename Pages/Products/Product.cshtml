@@ -7,16 +7,25 @@
 <script src="/js/product.js" asp-append-version="true"></script>
 
 <div class="product-page-wrapper">
-    <div class="product-image-gallery">
-        @foreach (var image in Model.images)
-        {
-            <span>@image.Description</span>
-            <img src="@image.Url">
-        }
-        @if (Model.images.Length == 0)
-        {
-            <span class="placeholder-image"></span>
-        }
+    <div class="product-image-grid-wrapper">
+        <div class="product-image">
+            <img src="@Model.images.First().Url" alt="" />
+            <span class="title">@Html.Raw(Model.MarkdownToHtml(Model.images.First().Description ?? ""))</span>
+        </div>
+        <div class="product-image-grid">
+
+            @foreach (var image in Model.images.Skip(1))
+            {
+                <div class="product-image">
+                    <img src="@image.Url" alt="" />
+                    <span class="title">@Html.Raw(Model.MarkdownToHtml(image.Description ?? ""))</span>
+                </div>
+            }
+            @if (Model.images.Length == 0)
+            {
+                <span class="placeholder-image"></span>
+            }
+        </div>
     </div>
     <div class="product-info">
 
@@ -32,9 +41,10 @@
                 @switch (extra.Type)
                 {
                     case Extras.Types.PerLetter:
+                        <b>@extra.Text</b><br>
                         if(extra.Cost != 0)
                         {
-                            <b>@extra.Text</b> <span>(+$@Model.FormatMoney(extra.Cost) per letter)</span><br>
+                             <span>(+$@Model.FormatMoney(extra.Cost) per letter)</span><br>
                         }
 
                         <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)" />

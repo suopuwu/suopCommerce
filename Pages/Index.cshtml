@@ -8,7 +8,7 @@
     <div class="product-grid">
         @foreach (var product in Model.products)
         {
-            if (Array.IndexOf(product.Extras, "hidden") != -1) continue;
+            if (Array.IndexOf(product.Tags, "hidden") != -1) continue;
             <div class="product-grid-tile" onclick="window.location.pathname = 'products/@product.Id'">
                 <span class="shadow"></span>
                 <span class="background-image" style="background-image: url('@await Model.GetImageUrlAsync(product.Images.FirstOrDefault())')"></span>

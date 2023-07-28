@@ -167,6 +167,8 @@ input[type=text]:focus, input[type=number]:focus {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
   justify-content: space-between;
+  gap: 5px 5px;
+  margin: 5px;
 }
 
 .product-grid-tile {
@@ -177,7 +179,6 @@ input[type=text]:focus, input[type=number]:focus {
   position: relative;
   background: radial-gradient(ellipse at bottom, #1B2735 0, #686868 100%);
   color: #fff;
-  margin: 6px;
   transition: all 0.2s;
   overflow: hidden;
   min-height: 500px;

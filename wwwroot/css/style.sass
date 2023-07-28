@@ -138,10 +138,13 @@ input[type=text], input[type=number]
   flex-flow: column
 
 $product-width: 500px
+$product-spacing: 5px
 .product-grid
   display: grid
   grid-template-columns: repeat(auto-fill, minmax($product-width, 1fr))
   justify-content: space-between
+  gap: $product-spacing $product-spacing
+  margin: $product-spacing
 .product-grid-tile
   cursor: pointer
   display: flex
@@ -150,7 +153,6 @@ $product-width: 500px
   position: relative
   background: radial-gradient(ellipse at bottom, #1B2735 0, #686868 100%)
   color: #fff
-  margin: 6px
   transition: all 0.2s
   overflow: hidden
   min-height: 500px

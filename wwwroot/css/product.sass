@@ -1,25 +1,57 @@
 $padding: 40px
+$text-width: 500px
 
 .product-page-wrapper
   @media (orientation: landscape)
     padding: $padding $padding 0 $padding
     gap: $padding
-    display: grid
-    grid-template-columns: 1fr 450px
+    display: flex
+    grid-template-columns: min($text-width * 2) $text-width
     align-items: start
+    justify-content: center
 
-.product-image-gallery
-  min-width: 100%
+$image-max-width: 350px
+.product-image-grid-wrapper
+  display: grid
+  gap: $padding
+  width: $text-width * 2
+  flex-shrink: 1
 
-  @media (orientation: landscape)
-    top: $padding
-  > img
-    height: 100px
-    &:first-of-type
-      max-width: 100%
-      height: auto
+.product-image-grid
+  display: grid
+  gap: $padding $padding
+  grid-template-columns: repeat(auto-fill, minmax($image-max-width, 1fr))
+  align-items: start
+
+.product-image
+  cursor: pointer
+  display: flex
+  flex-flow: column-reverse nowrap
+  text-decoration: none
+  position: relative
+  background: radial-gradient(ellipse at bottom, #1B2735 0, #686868 100%)
+  color: #fff
+  transition: all 0.2s
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)
+  overflow: hidden
+  width: 100%
+  >.title
+    position: absolute
+    z-index: 1
+    width: 100%
+    background-color: #000000e0
+    padding: 10px
+    opacity: 0
+    transition: opacity 0.2s
+    line-height: 1.5em
+  &:hover
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)
+    > .title
+      opacity: 1
 
 .product-info
+  width: $text-width
+  flex-shrink: 0
   display: flex
   flex-flow: column
   align-items: flex-start
@@ -31,7 +63,6 @@ $padding: 40px
 .product-addon
   $addon-padding: 1em
   display: inline-flex
-  cursor: pointer
   background-color: #00000000
   outline: #00000050 solid 1px
   transition: all 0.2s
@@ -48,8 +79,6 @@ $padding: 40px
 
 .product-extra
   margin-bottom: 1em
-
-div:has(.extra-text-field)
   width: 100%
 
 .extra-text-field
@@ -63,6 +92,7 @@ div:has(.extra-text-field)
 
 .extra-radio-wrapper
   display: flex
+  flex-flow: row wrap
 .extra-radio
   display: flex
   flex-flow: column

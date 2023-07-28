@@ -114,7 +114,7 @@ namespace SuopCommerce.Utils.Api
                         {
                             Name = item.Name,
                             Description = CreateDescription(cartItem, item),
-                            Images = imageUrls,
+                            Images = imageUrls.Count == 0 ? null : imageUrls,
                             Metadata = new Dictionary<string, string> { { "lskdj", "lksdjf" } }
                         },
                         UnitAmount = CalculatePrice(cartItem, item)
