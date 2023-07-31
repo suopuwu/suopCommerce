@@ -183,6 +183,7 @@ function popupForm(mode, data = {}) {
     form.classList.add("create-product-form");
     return form;
     } //todo make ui to choose products or images
+  //todo make checkout hover cart display money total correctly.
   function submitStart() {
     switch (mode) {
       case formModes.uploadImage:
@@ -292,7 +293,7 @@ function popupForm(mode, data = {}) {
     submitStart();
 
     fetch(form.submitUrl, {
-      method: form.method,
+      method: form.method, //todo refactor to reuse this function for all forms
       body: formData,
     })
       .then((response) => response.text())
