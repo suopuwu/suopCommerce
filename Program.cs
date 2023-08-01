@@ -13,11 +13,10 @@ using SuopCommerce.Pages;
 using SuopCommerce.Utils.Api;
 using System.Text;
 using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using suopCommerce.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
-builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -36,7 +35,18 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-StripeConfiguration.ApiKey = "sk_test_51NMGmDHGAiSJzSGYXfof3JxlLvX0oWg8Hh6I23NzCnLiUSEgRby5Lr23ZIuv9wZOUnwOzEsINXfdV73euSefLink00StTj2tFH";
+void ConfigureStripe()
+{
+    const string secretName = "stripeApiKey";
+    var keyVaultName = "suopCommerceSecrets";
+    var kvUri = $"https://{keyVaultName}.vault.azure.net";
+
+    var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+    StripeConfiguration.ApiKey = client.GetSecret(secretName).Value.Value;
+}
+
+ConfigureStripe();
+
 app.MapDelete("/api/products/{id}", async (HttpContext context, string id) =>
 {
   return await ProductDao.Delete(int.Parse(id), context.Request.Headers["delete-images"] == "true");

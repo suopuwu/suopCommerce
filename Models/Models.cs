@@ -17,7 +17,7 @@ namespace suopCommerce.Models
 
         private static string? connectionString = null;
 
-        private static void getConnectionString()
+        private static void GetConnectionString()
         {
             if(connectionString == null)
             {
@@ -43,7 +43,7 @@ namespace suopCommerce.Models
                 //string connectionString = configuration.GetConnectionString("Postgres") ??
                 //    throw new NullReferenceException("Connection string is null");
 
-                getConnectionString();
+                GetConnectionString();
                 optionsBuilder.UseNpgsql(connectionString);
             }
         }
