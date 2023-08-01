@@ -12,12 +12,15 @@ using SuopCommerce.Models;
 using SuopCommerce.Pages;
 using SuopCommerce.Utils.Api;
 using System.Text;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
+builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+
 // Add services to the container.
 builder.Services.AddRazorPages();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+﻿using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace suopCommerce.Models
 {
@@ -12,17 +15,37 @@ namespace suopCommerce.Models
         public DbSet<Product> Products { get; set;}
         public DbSet<Image> Images { get; set;}
 
+        private static string? connectionString = null;
+
+        private static void getConnectionString()
+        {
+            if(connectionString == null)
+            {
+                const string secretName = "postgres";
+                var keyVaultName = "suopCommerceSecrets";
+                var kvUri = $"https://{keyVaultName}.vault.azure.net";
+
+                var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+                connectionString = client.GetSecret(secretName).Value.Value;
+            }
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json")
-                .Build();
-            string connectionString = configuration.GetConnectionString("Postgres") ??
-                throw new NullReferenceException("Connection string is null");
+            if (!optionsBuilder.IsConfigured)
+            {
+                //below is the development locally hosted database
+                //IConfigurationRoot configuration = new ConfigurationBuilder()
+                //.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                //.AddJsonFile("appsettings.json")
+                //.Build();
 
-            optionsBuilder.UseNpgsql(connectionString);
-            
+                //string connectionString = configuration.GetConnectionString("Postgres") ??
+                //    throw new NullReferenceException("Connection string is null");
+
+                getConnectionString();
+                optionsBuilder.UseNpgsql(connectionString);
+            }
         }
     }
 
