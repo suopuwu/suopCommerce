@@ -1,21 +1,12 @@
-using Azure.Core;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Stripe;
 using SuopCommerce.Models;
-using SuopCommerce.Pages;
 using SuopCommerce.Utils.Api;
 using System.Text;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using suopCommerce.Models;
-
+using SuopCommerce.Utils;
+using System.Text.Json;
+using Newtonsoft.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -47,14 +38,25 @@ void ConfigureStripe()
 
 ConfigureStripe();
 
+//admin api calls
+
+//todo make all admin api calls have admin in the url.
+app.MapPost("/api/setPassword/{newPassword}", (HttpContext context, string newPassword) =>
+{
+    return AuthenticationUtil.AuthenticateApiCall(context) ?? AuthenticationUtil.SetPassword(newPassword);
+});
+
 app.MapDelete("/api/products/{id}", async (HttpContext context, string id) =>
 {
-  return await ProductDao.Delete(int.Parse(id), context.Request.Headers["delete-images"] == "true");
+    return AuthenticationUtil.AuthenticateApiCall(context) ??
+        await ProductDao.Delete(int.Parse(id), context.Request.Headers["delete-images"] == "true");
 });
+
 app.MapPost("/api/products", async (HttpContext context) =>
 {
 
-  return await ProductDao.Set(
+    return AuthenticationUtil.AuthenticateApiCall(context) ?? 
+        await ProductDao.Set(
                   context.Request.Form["Name"]!,
                   context.Request.Form["Description"]!,
                   context.Request.Form["Category"]!,
@@ -64,10 +66,11 @@ app.MapPost("/api/products", async (HttpContext context) =>
                   ((string?)context.Request.Form["Images"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray()
                   );
 });
-app.MapGet("/api/products/{id}", ProductDao.Get);
+
 app.MapPost("/api/products/{id}", async (HttpContext context, int id) =>
 {
-  return await ProductDao.Set(
+    return AuthenticationUtil.AuthenticateApiCall(context) ??
+        await ProductDao.Set(
                   context.Request.Form["Name"]!,
                   context.Request.Form["Description"]!,
                   context.Request.Form["Category"]!,
@@ -79,47 +82,61 @@ app.MapPost("/api/products/{id}", async (HttpContext context, int id) =>
                   );
 });//todo global images and text, ie color palette and info about all products
 
-app.MapPost("/api/checkout", async (HttpContext context) =>
-{
-  try
-  {
-    using StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8);
-    string jsonData = await reader.ReadToEndAsync();
-    var parsedData = JsonConvert.DeserializeObject<CartItem[]>(jsonData);
-    if (parsedData == null)
-    {
-      context.Response.StatusCode = 400;
-      return JsonConvert.SerializeObject(new { success = false, message = "Error: data is null" });
-    }
-    var headers = context.Request.Headers;
-
-    return await PaymentIntentHandler.CreateAsync(parsedData, headers["successUrl"], headers["cancelUrl"]);
-  }
-  catch (Exception ex)
-  {
-    return JsonConvert.SerializeObject(new { success = false, message = ex.Message });
-
-  }
-});
 
 app.MapPost("/api/images", async (HttpContext context) =>
 {
-  return await ImageDao.UploadImagesAsync(context.Request.Form.Files);
+    return AuthenticationUtil.AuthenticateApiCall(context) ?? 
+        await ImageDao.UploadImagesAsync(context.Request.Form.Files);
 });
 app.MapDelete("/api/images", async (HttpContext context) =>
 {
-  return await ImageDao.DeleteImageAsync(int.Parse(context.Request.Headers["id"]!), context.Request.Headers["delete-from-product"] == "true");
+    return AuthenticationUtil.AuthenticateApiCall(context) ?? 
+        await ImageDao.DeleteImageAsync(int.Parse(context.Request.Headers["id"]!), context.Request.Headers["delete-from-product"] == "true");
 });
 
-app.MapGet("/api/images/{id}", async (int id) =>
-{
-  return await ImageDao.GetImageAsync(id);
-});//todo see about moving these to a different file
 
 app.MapPost("/api/images/{id}", async (HttpContext context, int id) =>
 {
-  return await ImageDao.UpdateImageAsync(id, context.Request.Form["Description"]);
+    return AuthenticationUtil.AuthenticateApiCall(context) ?? 
+        await ImageDao.UpdateImageAsync(id, context.Request.Form["Description"]);
 });
+
+
+
+
+
+//public api calls
+
+app.MapGet("/api/images/{id}", async (int id) =>
+{
+    return await ImageDao.GetImageAsync(id);
+});//todo see about moving these to a different file
+
+app.MapPost("/api/checkout", async (HttpContext context) =>
+{
+    try
+    {
+        using StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8);
+        string jsonData = await reader.ReadToEndAsync();
+        var parsedData = JsonConvert.DeserializeObject<CartItem[]>(jsonData);
+        if (parsedData == null)
+        {
+            context.Response.StatusCode = 400;
+            return JsonConvert.SerializeObject(new { success = false, message = "Error: data is null" });
+        }
+        var headers = context.Request.Headers;
+
+        return await PaymentIntentHandler.CreateAsync(parsedData, headers["successUrl"], headers["cancelUrl"]);
+
+    }
+    catch (Exception ex)
+    {
+        return JsonConvert.SerializeObject(new { success = false, message = ex.Message });
+
+    }
+});
+
+app.MapGet("/api/products/{id}", ProductDao.Get);
 
 app.UseAuthorization();
 app.MapRazorPages();

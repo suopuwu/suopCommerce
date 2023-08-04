@@ -150,8 +150,9 @@ class Cart {
             },
             body: JSON.stringify(this.items)
         })
-        .then(response => response.text())
+            .then(response => response.text())
             .then(data => {
+                console.log(data)
                 let parsedData = JSON.parse(data)
                 if (!parsedData.success) {
                     throw new Error(parsedData.message)
@@ -159,6 +160,7 @@ class Cart {
             window.location = JSON.parse(data)['Location']
         })
             .catch(error => {
+                console.log(error)
                 stripeLoading.text = '<i style="color:red">Error:</i> ' + error
         })
     }

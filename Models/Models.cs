@@ -15,6 +15,8 @@ namespace suopCommerce.Models
         public DbSet<Product> Products { get; set;}
         public DbSet<Image> Images { get; set;}
 
+        public DbSet<AdminPassword> AdminPasswords { get; set;}
+
         private static string? connectionString = null;
 
         private static void GetConnectionString()
@@ -40,9 +42,11 @@ namespace suopCommerce.Models
                 //.AddJsonFile("appsettings.json")
                 //.Build();
 
-                //string connectionString = configuration.GetConnectionString("Postgres") ??
+                //connectionString = configuration.GetConnectionString("Postgres") ??
                 //    throw new NullReferenceException("Connection string is null");
+                //optionsBuilder.UseNpgsql(connectionString);
 
+                //below is the production db
                 GetConnectionString();
                 optionsBuilder.UseNpgsql(connectionString);
             }
@@ -71,5 +75,11 @@ namespace suopCommerce.Models
         public string Url { get; set; } = string.Empty;
         
         public string? Description { get; set; }
+    }
+
+    public class AdminPassword
+    {
+        public int Id { get; set; } = 1;
+        public string Value { get; set; } = "defaultpassword";
     }
 }

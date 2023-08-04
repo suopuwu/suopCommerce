@@ -59,6 +59,12 @@ footer {
   }
 }
 
+.centered-wrapper {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
 a.no-underline {
   color: inherit;
   text-decoration: none;
@@ -165,7 +171,7 @@ input[type=text]:focus, input[type=number]:focus {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
   justify-content: space-between;
   gap: 5px 5px;
   margin: 5px;
@@ -181,7 +187,7 @@ input[type=text]:focus, input[type=number]:focus {
   color: #fff;
   transition: all 0.2s;
   overflow: hidden;
-  min-height: 500px;
+  min-height: 450px;
 }
 .product-grid-tile > .shadow {
   display: block;

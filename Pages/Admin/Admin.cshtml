@@ -1,72 +1,103 @@
-﻿@page "/admin"
+﻿
+@page "/admin"
 @model AdminModel
+@using SuopCommerce.Utils;
 @{
 }
-<div class="page-padding-sides">
-<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
-<p>@ViewData["debug"]</p>
-<div class="admin-list">
-    <div><h1>Admin Settings</h1></div>
-    <div>
-        <input type="checkbox" id="confirm-deletion-checkbox" checked/>
-        Ask to confirm deletion
-    </div>
-    <div>
-        <input type="checkbox" id="delete-images-from-products-checkbox" checked />
-        Remove deleted images from products (decreases performance)
-    </div>
-    <div>
-        <input type="checkbox" id="delete-product-images-checkbox" />
-        Delete images when the associated product is deleted.
+
+@if(Request.Cookies["admin-password"] != null && AuthenticationUtil.IsAdmin(Request.Cookies["admin-password"]!))
+{
+    //todo make it use the cookies to pre fill the cart and such with images n stuff
+    <div class="page-padding-sides">
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <p>@ViewData["debug"]</p>
+    <div class="admin-list">
+        <div><h1>Admin Settings</h1></div>
+        <div>
+            <input type="checkbox" id="confirm-deletion-checkbox" checked/>
+            Ask to confirm deletion
+        </div>
+        <div>
+            <input type="checkbox" id="delete-images-from-products-checkbox" checked />
+            Remove deleted images from products (decreases performance)
+        </div>
+        <div>
+            <input type="checkbox" id="delete-product-images-checkbox" />
+            Delete images when the associated product is deleted.
+        </div>
+
     </div>
 
-</div>
-
-<div class="admin-list">
-    <div><h1>Products</h1></div>
-    <div>
-        <button onclick="popupForm(formModes.createProduct)">Add product</button>
-    </div>
-    @foreach (var product in Model.products)
-    {
-        <div class="admin-list-item" id="product_@product.Id">
-            @foreach (var image in await Model.GetImagesAsync(product.Images))
-            {
-                <img src="@image?.Url">
-                @if(image == null)
+    <div class="admin-list">
+        <div><h1>Products</h1></div>
+        <div>
+            <button onclick="popupForm(formModes.createProduct)">Add product</button>
+        </div>
+        @foreach (var product in Model.products)
+        {
+            <div class="admin-list-item" id="product_@product.Id">
+                @foreach (var image in await Model.GetImagesAsync(product.Images))
                 {
-                    <span>Has null images</span>
+                    <img src="@image?.Url">
+                    @if(image == null)
+                    {
+                        <span>Has null images</span>
+                    }
                 }
-            }
-            <p>@product.Id</p>
-            <p>@product.Name</p>
-            <p>@product.Price</p>
-            <span class="spacer"></span>
-            <button class="product-edit-item" onclick="popupForm(formModes.editProduct, {id: '@product.Id', name: `@product.Name`, description: `@product.Description.Replace("`", "\\`")`, category: `@product.Category`, price: `@product.Price`,tags: `@string.Join(", ", product.Tags ?? new string[] {})`, extras:`@string.Join(", ", product.Extras ?? new string[] {})`, images:`@string.Join(", ", product.Images ?? new int[] {})`})">📝</button>
-            <button class="product-delete-item" onclick="deleteProduct('@product.Id')">✖️</button>
+                <p>@product.Id</p>
+                <p>@product.Name</p>
+                <p>@product.Price</p>
+                <span class="spacer"></span>
+                <button class="product-edit-item" onclick="popupForm(formModes.editProduct, {id: '@product.Id', name: `@product.Name`, description: `@product.Description.Replace("`", "\\`")`, category: `@product.Category`, price: `@product.Price`,tags: `@string.Join(", ", product.Tags ?? new string[] {})`, extras:`@string.Join(", ", product.Extras ?? new string[] {})`, images:`@string.Join(", ", product.Images ?? new int[] {})`})">📝</button>
+                <button class="product-delete-item" onclick="deleteProduct('@product.Id')">✖️</button>
+            </div>
+        }
+    </div>
+    <div class="admin-list">
+        <div><h1>Images</h1></div>
+        <div>
+            <button onclick="popupForm(formModes.uploadImage)">Add Images</button>
         </div>
-    }
-</div>
-<div class="admin-list">
-    <div><h1>Images</h1></div>
-    <div>
-        <button onclick="popupForm(formModes.uploadImage)">Add Images</button>
+
+        @foreach (var image in Model.images)
+        {
+            <div class="admin-list-item" id="image_@image.Id">
+                <img src="@image.Url" alt="" />
+                <p>@image.Id</p>
+                <p class="admin-description">@image.Description</p>
+
+                <span class="spacer"></span>
+                <button class="product-edit-item" onclick="popupForm(formModes.editImage, {id: @image.Id, description: document.getElementById('image_@image.Id').querySelector('.admin-description').innerHTML})">📝</button>
+                <button class="product-delete-item" onclick="deleteImage('@image.Id')">✖️</button>
+            </div>
+        }
     </div>
 
-    @foreach (var image in Model.images)
-    {
-        <div class="admin-list-item" id="image_@image.Id">
-            <img src="@image.Url" alt="" />
-            <p>@image.Id</p>
-            <p class="admin-description">@image.Description</p>
+    <div>
+        <h1>Change password</h1>
+            
+        <form onsubmit="changePassword(document.querySelector('#admin-password-input').value);  return false;">
+            <input type="password" style="border-bottom: 1px solid black" id="admin-password-input">
+            <button class="rounded-square-button" type="submit">Submit</button>
+        </form>
+    </div>
+    </div>
+    <script src="~/lib/easymde.min.js" defer></script>
+    <script src="/js/admin.js" asp-append-version="true" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+} else
+{
+    <div class="centered-wrapper">
+        @if (Request.Cookies["admin-password"] != null)
+        {
+        <h1>Invalid password</h1>
+        }
+        <form onsubmit="Cookies.set('admin-password', document.querySelector('#admin-password-input').value); window.location = window.location; return false;">
+            <input type="password" style="border-bottom: 1px solid black" id="admin-password-input">
+            <button class="rounded-square-button" type="submit">Submit</button>
+        </form>
 
-            <span class="spacer"></span>
-            <button class="product-edit-item" onclick="popupForm(formModes.editImage, {id: @image.Id, description: document.getElementById('image_@image.Id').querySelector('.admin-description').innerHTML})">📝</button>
-            <button class="product-delete-item" onclick="deleteImage('@image.Id')">✖️</button>
-        </div>
-    }
-</div>
-</div>
-<script src="~/lib/easymde.min.js" defer></script>
-<script src="/js/admin.js" asp-append-version="true" defer></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    </div>
+
+
+}

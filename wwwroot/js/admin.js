@@ -293,7 +293,7 @@ function popupForm(mode, data = {}) {
     submitStart();
 
     fetch(form.submitUrl, {
-      method: form.method, //todo refactor to reuse this function for all forms
+      method: form.method, 
       body: formData,
     })
       .then((response) => response.text())
@@ -315,4 +315,18 @@ function popupForm(mode, data = {}) {
   });
 
   formPopup.showPopup();
+}
+
+
+function changePassword(newpassword) {
+    confirmAction('Are you sure you want to change your password?', () => {
+        fetch("/api/setPassword/" + newpassword, {
+            method: 'post',
+        }).then((response) => response.text())
+            .then(() => {
+                window.location = window.location
+            })
+            
+    })
+    
 }

@@ -70,6 +70,11 @@ footer
   @media (orientation: landscape)
     padding: 0 20% 0 20%//1em + 120px to have spacing for the footer.
 
+.centered-wrapper
+  display: flex
+  flex-flow: column
+  align-items: center
+
 //Misc styling
 
 a.no-underline
@@ -137,11 +142,11 @@ input[type=text], input[type=number]
   display: flex
   flex-flow: column
 
-$product-width: 500px
+$product-size: 450px
 $product-spacing: 5px
 .product-grid
   display: grid
-  grid-template-columns: repeat(auto-fill, minmax($product-width, 1fr))
+  grid-template-columns: repeat(auto-fill, minmax($product-size, 1fr))
   justify-content: space-between
   gap: $product-spacing $product-spacing
   margin: $product-spacing
@@ -155,7 +160,7 @@ $product-spacing: 5px
   color: #fff
   transition: all 0.2s
   overflow: hidden
-  min-height: 500px
+  min-height: $product-size
   > .shadow
     display: block
     width: 100%

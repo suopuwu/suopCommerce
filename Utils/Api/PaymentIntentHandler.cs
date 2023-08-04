@@ -56,7 +56,7 @@ namespace SuopCommerce.Utils.Api
             return price;
         }
 
-        public static string CreateDescription(CartItem item, suopCommerce.Models.Product product)
+        public static string? CreateDescription(CartItem item, suopCommerce.Models.Product product)
         {
             using var db = new StoreContext();
 
@@ -83,12 +83,21 @@ namespace SuopCommerce.Utils.Api
                 if (addon == null) continue;
                 description.Append(addon.Name).Append(" added, ");
             }
-            description.Remove(description.Length - 2, 1);
+            if(description.Length > 2) {
+                description.Remove(description.Length - 2, 1);
+            }
+            if (description.ToString() == string.Empty) {
+                return null;
+            }
             return description.ToString();
         }
 
         public static async Task<string> CreateAsync(CartItem[] cart, string? successUrl, string? cancelUrl)
         {
+            if(cart.Length == 0)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Cart must have at least one item to check out."});
+            }
             successUrl ??= string.Empty;
             cancelUrl ??= string.Empty;
             var lineItems = new List<SessionLineItemOptions>();
