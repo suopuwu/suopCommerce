@@ -106,6 +106,7 @@ class SuopPopup {
         left: 0;
         background-color: rgba(0, 0, 0, 0.5);
         line-height: 0;
+        pointer-events: none;
       }
 
       #${this.id} .suop-popup-wrapper {
@@ -180,10 +181,7 @@ class SuopPopup {
             this.node.lastMouseDownTarget = e.target
         })
         this.node.onclick = (e) => {
-            if (
-                (e.target.id == this.id || e.target.classList.contains('suop-popup-close-button')) &&
-                (this.node.lastMouseDownTarget.id == this.id || this.node.lastMouseDownTarget.classList.contains('suop-popup-close-button'))
-            ) {
+            if (e.target.id == this.id) {
                 if (this.#options.floating) {
                     return
                 }

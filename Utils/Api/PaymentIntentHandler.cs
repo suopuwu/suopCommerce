@@ -16,7 +16,7 @@ namespace SuopCommerce.Utils.Api
     public static class PaymentIntentHandler
     {
 
-        private static long CalculatePrice(CartItem item, suopCommerce.Models.Product product)
+        public static long CalculatePrice(CartItem item, suopCommerce.Models.Product product)
         {
             using var db = new StoreContext();
 

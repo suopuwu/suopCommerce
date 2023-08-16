@@ -1,5 +1,55 @@
 ﻿@page
+@using suopCommerce.Models;
 @model SuopCommerce.Pages.checkoutModel
-@{
-}
-<button id="checkout-button" onclick="window.suopCart.submitCart()">Checkout</button>
+
+<link href="/css/checkout.css" rel="stylesheet" type="text/css" />
+
+<div class="page-padding-sides">
+    <div class="checkout-list">
+        @for(var i = 0; i < Model.cartItems.Length; i++)
+        {
+            var cartItem = Model.cartItems[i];
+            //todo make appendix extra have description text for images
+            //todo make extras in this page display the user friendly names for customizations
+            Product? product = await Model.db.Products.FindAsync(cartItem.Id);
+            if (product == null) continue;
+
+            string thumbnailUrl = await Model.GetImageUrlAsync(product.Images.FirstOrDefault(-1));
+
+            string elementId = $"checkout-item-{i}";
+
+             <div class="checkout-item" id="@elementId">
+                <span style="background-image: url('@thumbnailUrl')" class="checkout-product-image"></span>
+                <span class="checkout-item-text">
+                    <h1>
+                        @product.Name
+                    </h1>
+                    <span class="checkout-item-price">
+                        $@Model.FormatMoney(((double)Model.GetPriceFromProduct(cartItem, product)) / 100)
+                    </span>
+                        @foreach(var customization in cartItem.Customization)
+                            {
+                            if (customization.Length != 2) continue;
+                            <span>
+                                <b>@Models.Extras.GetExtraFromIdInProduct(customization[0], product).Text:</b> @customization[1]
+                            </span>
+                        }
+                    <span>
+                        @if (cartItem.Children.Length > 0)
+                        {
+                            <b>Addons:</b>
+                            @foreach (var addon in cartItem.Children)
+                            {
+                                @Model.db.Products.Find(addon.Id)?.Name
+                            }
+                        }
+                    </span>
+                </span>
+                <div class="flex-spacer"></div>
+                <button class="rounded-square-button" onclick="window.suopCart.tryRemove(@i); window.location = window.location">Delete</button>
+            </div>
+        }
+    </div>
+    <p>Subtotal (@Model.cartItems.Length item@(Model.cartItems.Length == 1 ? "" : "s")): <b>$@Model.FormatMoney(Model.totalPrice)</b></p>
+    <button id="checkout-button" onclick="window.suopCart.submitCart()" class="rounded-square-button">Checkout</button>
+</div>

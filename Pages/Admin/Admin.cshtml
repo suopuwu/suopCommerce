@@ -48,7 +48,7 @@
                 <p>@product.Name</p>
                 <p>@product.Price</p>
                 <span class="spacer"></span>
-                <button class="product-edit-item" onclick="popupForm(formModes.editProduct, {id: '@product.Id', name: `@product.Name`, description: `@product.Description.Replace("`", "\\`")`, category: `@product.Category`, price: `@product.Price`,tags: `@string.Join(", ", product.Tags ?? new string[] {})`, extras:`@string.Join(", ", product.Extras ?? new string[] {})`, images:`@string.Join(", ", product.Images ?? new int[] {})`})">📝</button>
+                <button class="product-edit-item" onclick="popupForm(formModes.editProduct, {id: '@product.Id', name: `@product.Name`, description: `@product.Description.Replace("`", "\\`")`, category: `@product.Category`, price: `@product.Price`,tags: `@string.Join(", ", product.Tags ?? new string[] {})`, extras:`@string.Join(",,  ", product.Extras ?? new string[] {})`, images:`@string.Join(", ", product.Images ?? new int[] {})`})">📝</button>
                 <button class="product-delete-item" onclick="deleteProduct('@product.Id')">✖️</button>
             </div>
         }
@@ -77,7 +77,8 @@
         <h1>Change password</h1>
             
         <form onsubmit="changePassword(document.querySelector('#admin-password-input').value);  return false;">
-            <input type="password" style="border-bottom: 1px solid black" id="admin-password-input">
+            <input style="border-bottom: 1px solid black" id="admin-password-input" required>
+
             <button class="rounded-square-button" type="submit">Submit</button>
         </form>
     </div>
@@ -93,7 +94,7 @@
         <h1>Invalid password</h1>
         }
         <form onsubmit="Cookies.set('admin-password', document.querySelector('#admin-password-input').value); window.location = window.location; return false;">
-            <input type="password" style="border-bottom: 1px solid black" id="admin-password-input">
+            <input style="border-bottom: 1px solid black" id="admin-password-input">
             <button class="rounded-square-button" type="submit">Submit</button>
         </form>
 

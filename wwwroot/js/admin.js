@@ -316,6 +316,7 @@ function popupForm(mode, data = {}) {
 
   formPopup.showPopup();
 }
+//todo make clicking on product images lightbox
 
 
 function changePassword(newpassword) {

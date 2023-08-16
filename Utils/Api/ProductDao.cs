@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using suopCommerce.Models;
+using SuopCommerce.Utils.Data;
 using System.Text.Json;
 
 namespace SuopCommerce.Utils.Api
@@ -78,9 +79,8 @@ namespace SuopCommerce.Utils.Api
         {
             StoreContext db = new();
             try
-            {
-                return JsonSerializer.Serialize(await db.Products.FindAsync(id) ?? throw new Exception("Product not found"));
-
+            {//todo make caching work
+                    return JsonSerializer.Serialize(await db.Products.FindAsync(id) ?? throw new Exception("Product not found"));
             }
             catch (Exception ex)
             {

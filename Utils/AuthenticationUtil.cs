@@ -34,7 +34,7 @@ namespace SuopCommerce.Utils
             CachedPassword = TryGetPassword().Value;
             return CachedPassword == password;
         }
-
+        //todo make sure you have server side caching as well
         public static string SetPassword(string newPassword)
         {
             StoreContext db = new();
@@ -44,6 +44,7 @@ namespace SuopCommerce.Utils
             return JsonConvert.SerializeObject(new { success = true, message = "Password changed"});
         }
 
+        //returns null if properly authenticated, an error message otherwise.
         public static string? AuthenticateApiCall(HttpContext context)
         {
             if (!IsAdmin(context.Request.Cookies["admin-password"]))

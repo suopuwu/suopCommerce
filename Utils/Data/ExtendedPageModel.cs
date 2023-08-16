@@ -1,6 +1,8 @@
 ﻿using Markdig;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using suopCommerce.Models;
+using SuopCommerce.Models;
+using SuopCommerce.Utils.Api;
 
 namespace SuopCommerce.Utils.Data
 {
@@ -23,5 +25,8 @@ namespace SuopCommerce.Utils.Data
         {
             return Markdown.ToHtml(markdown);
         }
+
+        public long GetPriceFromProduct(CartItem item, Product product) => PaymentIntentHandler.CalculatePrice(item, product);
+        public string GetDescriptionFromProduct(CartItem item, Product product) => PaymentIntentHandler.CreateDescription(item, product) ?? "";
     }
 }

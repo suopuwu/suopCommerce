@@ -1,7 +1,9 @@
 ﻿using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Microsoft.EntityFrameworkCore;
 using suopCommerce.Models;
+using SuopCommerce.Utils.Data;
 using System.ComponentModel;
 using System.Security.Policy;
 using System.Text.Json;
@@ -122,7 +124,7 @@ namespace SuopCommerce.Utils.Api
             StoreContext db = new();
             try
             {
-                return JsonSerializer.Serialize(await db.Images.FindAsync(id) ?? throw new Exception("Image not found"));
+                    return JsonSerializer.Serialize(await db.Images.FindAsync(id) ?? throw new Exception("Image not found"));
 
             }
             catch (Exception ex)

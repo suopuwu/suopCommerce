@@ -8,7 +8,7 @@
 
 <div class="product-page-wrapper">
     <div class="product-image-grid-wrapper">
-        <div class="product-image">
+        <div class="product-image" onclick="lightboxImage('@Model.images.First().Url', `@Html.Raw(Model.MarkdownToHtml(Model.images.First().Description ?? ""))`)">
             <img src="@Model.images.First().Url" alt="" />
             <span class="title">@Html.Raw(Model.MarkdownToHtml(Model.images.First().Description ?? ""))</span>
         </div>
@@ -16,7 +16,7 @@
 
             @foreach (var image in Model.images.Skip(1))
             {
-                <div class="product-image">
+                <div class="product-image lightbox-target" onclick="lightboxImage('@image.Url', `@Html.Raw(Model.MarkdownToHtml(image.Description ?? ""))`)">
                     <img src="@image.Url" alt="" />
                     <span class="title">@Html.Raw(Model.MarkdownToHtml(image.Description ?? ""))</span>
                 </div>
@@ -110,12 +110,26 @@
                         </label>
                         break;
 
+                    case Extras.Types.Appendix:
+                        var parsedAppendixId = -1;
+                        int.TryParse(extra.Id, out parsedAppendixId);
+                        var appendedProduct = Model.db.Products.Find(parsedAppendixId);
+                        if (appendedProduct == null) continue;
+                        @Html.Raw(Model.MarkdownToHtml(appendedProduct.Description))
+                        @foreach (var image in await Model.GetImageArrayFromIdsAsync(appendedProduct.Images))
+                        {
+                            <img class="appended-image lightbox-target" src="@image.Url" alt="" onclick="lightboxImage('@image.Url')"/>
+                        }
+                        break;
+
                     default:
                         <b>Extra type @extra.Type.ToString() has not yet been implemented.</b>
                         break;
 
                     case Extras.Types.Invalid:
                         <h1>Invalid extra:</h1> @extra.Text
+                        break;
+                    case Extras.Types.Empty:
                         break;
                 }
             </div>

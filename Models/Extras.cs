@@ -11,9 +11,11 @@ namespace SuopCommerce.Models
             PerLetter,
             TextField,
             Radio,
-            Addon
+            Addon,
+            Empty,
+            Appendix
         }
-
+        //todo ensure that customers cannot buy hidden products
         public record Extra(
             Types Type = Types.Invalid,
             string Text = "",
@@ -31,21 +33,21 @@ namespace SuopCommerce.Models
             }
             try
             {
-                var parts = extraString.Split(":");
+                var parts = extraString.Split("::");
 
                 switch (parts[0].ToLower())
                 {
-                    case "per letter"://per letter:<id>:<display text>:<cost per letter>
+                    case "per letter"://per letter::<id>::<display text>::<cost per letter>
                         validateExtraSections(parts, 4);
                         return new Extra(Type: Types.PerLetter, Id: parts[1], Text:parts[2], Cost: Double.Parse(parts[3]));
-                    case "text field"://text field:<id>:<display text>:<hint text>
+                    case "text field"://text field::<id>::<display text>::<hint text>
                         validateExtraSections(parts, 4);
                         return new Extra(Type: Types.TextField, Id: parts[1], Text: parts[2], HintText: parts[3]);
-                    case "radio"://radio:<id>:<display text>:<repeat <radio title>/<radio cost> as needed, separating with />
+                    case "radio"://radio::<id>::<display text>::<repeat <radio title>/:/<radio cost> as needed, separating with /:/>
                         validateExtraSections(parts, 4);
-                        var radioParts = parts[3].Split("/");
+                        var radioParts = parts[3].Split("/:/");
                         if (radioParts.Length % 2 != 0) throw new Exception("Odd number of radio parts");
-
+                        //todo make addons show up on the checkout page
                         Dictionary<string, double> radioOptions = new();
                         for(var i = 0; i < radioParts.Length / 2; i++)
                         {
@@ -55,9 +57,14 @@ namespace SuopCommerce.Models
                         if (radioOptions.Count == 0) throw new Exception("At least one radio option required, zero found");
                         
                         return new Extra(Type: Types.Radio, Id: parts[1], Text: parts[2], RadioOptions: radioOptions);
-                    case "addon":
+                    case "addon"://addon::<product id to list as addon>
                         validateExtraSections(parts, 2);
                         return new Extra(Type: Types.Addon, Id: parts[1]);
+                    case "appendix"://addon::<product id to append>
+                        validateExtraSections(parts, 2);
+                        return new Extra(Type: Types.Appendix, Id: parts[1]);
+                    case "":
+                        return new Extra(Type: Types.Empty);
                     default:
                         throw new Exception(parts[0] + " is not a valid extra type");
                 }

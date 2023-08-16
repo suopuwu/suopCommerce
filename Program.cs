@@ -7,10 +7,14 @@ using Azure.Security.KeyVault.Secrets;
 using SuopCommerce.Utils;
 using System.Text.Json;
 using Newtonsoft.Json;
+using suopCommerce.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -63,7 +67,7 @@ app.MapPost("/api/products", async (HttpContext context) =>
                   double.Parse(context.Request.Form["Price"]!),
                   ((string?)context.Request.Form["Tags"] ?? "").Replace(" ", "").Split(",").ToArray(),
                   ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(extra => extra.Trim()).ToArray(),
-                  ((string?)context.Request.Form["Images"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray()
+                  ((string?)context.Request.Form["Images"] ?? "").Replace(" ", "").Split(",,", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray()
                   );
 });
 
@@ -76,7 +80,7 @@ app.MapPost("/api/products/{id}", async (HttpContext context, int id) =>
                   context.Request.Form["Category"]!,
                   double.Parse(context.Request.Form["Price"]!),
                   ((string?)context.Request.Form["Tags"] ?? "").Replace(" ", "").Split(",").ToArray(),
-                  ((string?)context.Request.Form["Extras"] ?? "").Split(",").Select(extra => extra.Trim()).ToArray(),
+                  ((string?)context.Request.Form["Extras"] ?? "").Split(",,").Select(extra => extra.Trim()).ToArray(),
                   ((string?)context.Request.Form["Images"] ?? "").Replace(" ", "").Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray(),
                   id
                   );

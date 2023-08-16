@@ -29,7 +29,7 @@ $base-padding: 10px
     outline: none
 
 html
-  min-width: 100%
+  width: 100%
   min-height: 100%
   font-family: sans-serif
 
@@ -103,10 +103,28 @@ i
   filter: invert(1)
   cursor: pointer
 
+$cart-item-height: 5em
 .shopping-popup-item
-  display: block
-  >img
-    max-height: 3em
+  display: flex
+  padding: 1em 0 1em 0
+  width: calc($cart-item-height * 4)
+  border-bottom: 1px solid grey
+  &:first-of-type
+    padding-top: 0
+  &:last-of-type
+    border-bottom: none
+
+.cart-item-image
+  display: inline-block
+  margin-right: 1em
+  flex-shrink: 0
+  width: $cart-item-height
+  height: $cart-item-height
+  background-size: cover
+  background-position: center
+
+.flex-spacer
+  flex-grow: 1
 
 //Special text formatting
 $warning-color: #ff453f
@@ -204,3 +222,19 @@ $product-spacing: 5px
 
 .hidden
   display: none
+
+.lightboxed-image
+  max-width: 100%
+
+.lightbox-target
+  cursor: pointer
+
+.lightbox-wrapper
+  background-color: white
+  line-height: 0
+
+.lightbox-description
+  > p
+    padding-left: 1em
+    line-height: 1.5em
+    padding-bottom: 0.5em

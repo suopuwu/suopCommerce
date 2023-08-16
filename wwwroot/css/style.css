@@ -10,7 +10,7 @@
 }
 
 html {
-  min-width: 100%;
+  width: 100%;
   min-height: 100%;
   font-family: sans-serif;
 }
@@ -125,10 +125,30 @@ i {
 }
 
 .shopping-popup-item {
-  display: block;
+  display: flex;
+  padding: 1em 0 1em 0;
+  width: 20em;
+  border-bottom: 1px solid grey;
 }
-.shopping-popup-item > img {
-  max-height: 3em;
+.shopping-popup-item:first-of-type {
+  padding-top: 0;
+}
+.shopping-popup-item:last-of-type {
+  border-bottom: none;
+}
+
+.cart-item-image {
+  display: inline-block;
+  margin-right: 1em;
+  flex-shrink: 0;
+  width: 5em;
+  height: 5em;
+  background-size: cover;
+  background-position: center;
+}
+
+.flex-spacer {
+  flex-grow: 1;
 }
 
 .warning {
@@ -238,4 +258,23 @@ input[type=text]:focus, input[type=number]:focus {
 
 .hidden {
   display: none;
+}
+
+.lightboxed-image {
+  max-width: 100%;
+}
+
+.lightbox-target {
+  cursor: pointer;
+}
+
+.lightbox-wrapper {
+  background-color: white;
+  line-height: 0;
+}
+
+.lightbox-description > p {
+  padding-left: 1em;
+  line-height: 1.5em;
+  padding-bottom: 0.5em;
 }/*# sourceMappingURL=style.css.map */
