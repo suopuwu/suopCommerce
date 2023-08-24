@@ -23,15 +23,44 @@ body {
 }
 
 header {
-  padding: 50px;
-  background-color: black;
-  color: white;
+  padding: 30px;
+  background-color: #f1f1f1;
   display: flex;
   align-items: center;
   width: 100%;
+  flex-flow: column;
 }
-header > .spacer {
+header > .header-row {
+  align-items: center;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-flow: row;
+}
+header > .header-row:not(:last-child) {
+  padding-bottom: 20px;
+}
+header > .header-row > .spacer {
   flex-grow: 1;
+}
+
+.header-links > a {
+  font-weight: bold;
+  letter-spacing: -0.7px;
+  margin: 10px;
+  margin-bottom: 0;
+}
+
+.cart-button {
+  right: 0;
+  position: absolute;
+}
+
+.header-item {
+  border-radius: 10px;
+}
+.header-item > img {
+  height: 6em;
 }
 
 main {
@@ -120,7 +149,6 @@ i {
 }
 
 #header-cart-button-image {
-  filter: invert(1);
   cursor: pointer;
 }
 

@@ -60,7 +60,7 @@ namespace SuopCommerce.Models
                     case "addon"://addon::<product id to list as addon>
                         validateExtraSections(parts, 2);
                         return new Extra(Type: Types.Addon, Id: parts[1]);
-                    case "appendix"://addon::<product id to append>
+                    case "appendix"://appendix::<product id to append>
                         validateExtraSections(parts, 2);
                         return new Extra(Type: Types.Appendix, Id: parts[1]);
                     case "":

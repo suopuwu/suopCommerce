@@ -14,10 +14,22 @@
 </head>
 <body>
     <header>
-        <a asp-page="/Index">Home</a>
-        <!--a href="/admin">Admin(remove in production)</a-->
-        <span class="spacer"></span>
-        <a class="no-underline cart-hover-target" href="/checkout"><span class="cart-product-number"></span><img id="header-cart-button-image" src="/img/cart.svg" alt="" /></a>
+        <div class="header-row">
+            <span class="spacer"></span>
+
+            <a asp-page="/Index" class="header-item no-underline"><img src="~/img/mg-logo.svg"/></a>
+            <span class="spacer"></span>
+            <a class="no-underline cart-hover-target cart-button" href="/checkout"><span class="cart-product-number"></span><img id="header-cart-button-image" src="/img/cart.svg" alt="" /></a>
+        </div>
+        <div class="header-row header-links">
+            <span class="spacer"></span>
+            <a class="no-underline" href="/">Shop</a>
+            <a class="no-underline" href="/fontViewer">Font Viewer</a>
+            <a class="no-underline" href="/about">About</a>
+            <a class="no-underline" href="/contact">Contact</a>
+            <span class="spacer"></span>
+
+        </div>
     </header>
     <main role="main">
         @RenderBody()
@@ -25,7 +37,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - SuopCommerce - <a asp-page="/Privacy">Privacy</a>
+            &copy; 2023 - SuopCommerce - Made with love in Boise
         </div>
     </footer>
 

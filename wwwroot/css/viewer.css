@@ -1,0 +1,29 @@
+#font-previewer-input {
+  width: 100%;
+  font-size: 3em;
+  padding-top: 10px;
+}
+
+.font-previews {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 1em;
+}
+
+.font-preview {
+  flex-grow: 1;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  margin: 1em;
+}
+.font-preview > .label {
+  padding: 10px;
+  text-transform: capitalize;
+  background-color: black;
+  display: block;
+  color: white;
+}
+.font-preview > .preview {
+  padding: 20px;
+  display: block;
+  font-size: 3em;
+}/*# sourceMappingURL=viewer.css.map */
