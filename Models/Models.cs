@@ -37,17 +37,17 @@ namespace suopCommerce.Models
             if (!optionsBuilder.IsConfigured)
             {
                 //below is the development locally hosted database
-                IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json")
-                .Build();
+                //IConfigurationRoot configuration = new ConfigurationBuilder()
+                //.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                //.AddJsonFile("appsettings.json")
+                //.Build();
 
-                connectionString = configuration.GetConnectionString("Postgres") ??
-                    throw new NullReferenceException("Connection string is null");
-                optionsBuilder.UseNpgsql(connectionString);
+                //connectionString = configuration.GetConnectionString("Postgres") ??
+                //    throw new NullReferenceException("Connection string is null");
+                //optionsBuilder.UseNpgsql(connectionString);
 
                 //below is the production db
-                //GetConnectionString();
+                GetConnectionString();
                 optionsBuilder.UseNpgsql(connectionString);
             }
         }

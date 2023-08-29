@@ -8,7 +8,11 @@
 
 <div class="product-page-wrapper">
     <div class="product-image-grid-wrapper">
-        <div class="product-image" onclick="lightboxImage('@Model.images.First().Url', `@Html.Raw(Model.MarkdownToHtml(Model.images.First().Description ?? ""))`)">
+        @if (Model.images.Length == 0)
+        {
+                <span class="placeholder-image"></span>
+        } else {
+        <div class="product-image" onclick="lightboxImage('@Model.images.First().Url', `@Html.Raw(Model.MarkdownToHtml((Model.images.First()).Description ?? ""))`)">
             <img src="@Model.images.First().Url" alt="" />
             <span class="title">@Html.Raw(Model.MarkdownToHtml(Model.images.First().Description ?? ""))</span>
         </div>
@@ -21,12 +25,11 @@
                     <span class="title">@Html.Raw(Model.MarkdownToHtml(image.Description ?? ""))</span>
                 </div>
             }
-            @if (Model.images.Length == 0)
-            {
-                <span class="placeholder-image"></span>
-            }
+            
         </div>
+        }
     </div>
+
     <div class="product-info">
 
         <h1>@Model.product.Name</h1>

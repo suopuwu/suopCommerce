@@ -31,4 +31,8 @@
 .admin-list-item > button {
   border-radius: 0;
   cursor: pointer;
+}
+
+.extra-list {
+  border: 1px solid black;
 }/*# sourceMappingURL=admin.css.map */

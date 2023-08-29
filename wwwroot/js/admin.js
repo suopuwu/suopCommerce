@@ -148,10 +148,28 @@ function popupForm(mode, data = {}) {
         }
 
         function createExtraMaker(inputNode) {
+            let extras = inputNode.value
+            inputNode.style.display = 'none'
             let wrapperNode = document.createElement('span')
             form.append(wrapperNode)
             wrapperNode.innerHTML = `
-                <p>this is a test</p>
+                <p class="extra-list" oninput="document.querySelector('#${inputNode.id}').value = this.innerText.replaceAll(/(\\n)+/g, ',,');" contenteditable>
+                ${extras.replaceAll(',,', '<br>')}
+                </p>
+                <span class="extra-instructions">
+                To make an extra, simply use one of the formats specified below. One extra per line, they are separated by newlines.
+
+                <br>
+                per letter::id::display text::cost per letter
+                <br>
+                text field::id::display text::hint text
+                <br>
+                radio::id::display text::repeat (radio title/:/radio cost) as needed, separating with /:/>
+                <br>
+                addon::product id to list as addon
+                <br>
+                appendix::product id to append
+                </span>
             `
         }
 
@@ -193,14 +211,16 @@ function popupForm(mode, data = {}) {
                     'number'
                 )
                 createInputNode('Tags', 'Tags', data.tags ?? '', false)
-                let test = document.createElement('div')
-                test.text = 'a;lsdkfjalsd;kfj'
-                createInputNode(
-                    'Extras',
+
+                let extras = createInputNode(
+                    'Extras (extras are not validated in this form)',
                     'Extras',
                     data.extras ?? '',
                     false
-                ).parentNode.append(test)
+                )
+
+
+                createExtraMaker(extras)
 
                 createInputNode('Images', 'Images', data.images ?? '', false)
                 form.method = 'post'
@@ -333,6 +353,7 @@ function popupForm(mode, data = {}) {
         })
             .then((response) => response.text())
             .then((data) => {
+                console.log(data)
                 //handle response, depending on the mode
                 let parsedData = JSON.parse(data)
                 console.log(parsedData)
@@ -343,6 +364,7 @@ function popupForm(mode, data = {}) {
                 }
             })
             .catch((error) => {
+                console.log(error)
                 //handle failure, depending on the mode
                 handleFailure(error)
             })
