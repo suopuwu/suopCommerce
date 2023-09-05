@@ -90,6 +90,7 @@ footer
   flex-flow: column
   align-items: flex-start
   width: 100%
+  padding: 0 10px 0 10px
   @media (orientation: landscape)
     padding: 0 20% 0 20%//1em + 120px to have spacing for the footer.
 
@@ -190,6 +191,9 @@ $product-spacing: 5px
   justify-content: space-between
   gap: $product-spacing $product-spacing
   margin: $product-spacing
+  @media (orientation: portrait)
+    grid-template-columns: 1fr
+
 .product-grid-tile
   cursor: pointer
   display: flex
@@ -200,6 +204,7 @@ $product-spacing: 5px
   color: #fff
   transition: all 0.2s
   overflow: hidden
+
   min-height: $product-size
   > .shadow
     display: block
@@ -224,6 +229,8 @@ $product-spacing: 5px
     padding: 10px
     opacity: 0
     transition: opacity 0.2s
+    @media (orientation: portrait)
+      opacity: 1
   &:hover
     > .shadow
       box-shadow: inset 0 0 10px #000000
@@ -260,3 +267,9 @@ $product-spacing: 5px
     padding-left: 1em
     line-height: 1.5em
     padding-bottom: 0.5em
+
+.about-page
+  > p
+    padding-bottom: 1em
+  > img
+    max-width: 100%

@@ -41,7 +41,7 @@ namespace SuopCommerce.Utils.Api
                 switch (chosenExtra.Type)
                 {
                     case Extras.Types.PerLetter:
-                        price += (long)((chosenExtra.Cost * customization[1].Length) * 100);
+                        price += (long)(PerLetterCostCalc.calc(customization[1].Length, chosenExtra.Cost, chosenExtra.freeLetters) * 100);
                         break;
                     case Extras.Types.Radio:
                         var costOfThisOption = 0.0;

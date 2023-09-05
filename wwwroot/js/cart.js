@@ -3,7 +3,16 @@ class Cart {
     //paths to not show hover carts on
     #hiddenPaths = ['/checkout']
 
+    #pruneNullValues() {
+        let pruned = []
+        for (let item of this.items) {
+            if (item !== null) pruned.push(item)
+        }
+        this.items = pruned
+    }
+
     #validateCartItemsAndRender() {
+        this.#pruneNullValues()
         let items = this.items
         let invalidIds = new Set()
         let itemCount = items.length
@@ -30,9 +39,11 @@ class Cart {
     #setHoverCarts() {
         let cart = this
         function showHoverCart(node) {
+            cart.#pruneNullValues()
             if (
                 cart.items.length == 0 ||
-                cart.#hiddenPaths.includes(window.location.pathname)
+                cart.#hiddenPaths.includes(window.location.pathname) ||
+                screen.orientation.type.includes('portrait')
             )
                 return
             node.suopCartShown = true
@@ -40,20 +51,26 @@ class Cart {
             let hoverCart = new SuopPopup('', {
                 floating: true,
                 background: 'white',
-                x: node.offsetLeft + node.offsetWidth,
-                y: node.offsetTop + node.offsetHeight,
+                x: node.offsetLeft + node.offsetWidth + 30,
+                y: node.offsetTop + node.offsetHeight + 35,
             })
+
             //add items to the cart
             fillHoverCart(hoverCart)
             hoverCart.node.style.translate = '-100%'
             //set the cart to disappear on mouse leave
-            hoverCart.node.addEventListener('mouseleave', () => {
-                node.suopCartShown = false
+            hoverCart.node.addEventListener('mouseleave', (e) => {
                 node.mouseEnteredHoverCart = false
-                hoverCart.hideThenDelete()
+                if (e.relatedTarget.id !== 'header-cart-button-image') {
+                    node.suopCartShown = false
+                    hoverCart.hideThenDelete()
+                }
+                console.log('exited cart')
+
             })
             hoverCart.node.addEventListener('mouseenter', () => {
                 node.mouseEnteredHoverCart = true
+                console.log('entered cart')
             })
             hoverCart.toggle()
             return hoverCart
@@ -62,6 +79,8 @@ class Cart {
             let contentContainer = popup.node.querySelector(
                 '.suop-popup-content'
             )
+            contentContainer.style.maxHeight = '80vh'
+            contentContainer.style.overflowY = 'auto'
             if (contentContainer == null) return
             for (let index = 0; index < cart.items.length; index++) {
                 let item = cart.items[index]
@@ -92,12 +111,15 @@ class Cart {
                         </div>
                         <div class="flex-spacer"></div>
                         <button onclick="
+                            let total = document.querySelector('.cart-total');
+                            total.setAttribute('data-value', parseFloat(total.getAttribute('data-value')) - parseFloat(${item.displayPrice}))
+                            total.innerText = formatPrice(total.getAttribute('data-value'));
                             window.suopCart.tryRemove(${index});
-                            document.getElementById('${itemNode.id}').remove()
+                            document.getElementById('${itemNode.id}').remove();
                         " class="rounded-square-button">delete</button>
                     `
                 })
-            }
+            }//todo move logic outside of onclicks
             let checkoutButton = document.createElement('button')
             contentContainer.append(checkoutButton)
             let cartTotal = 0
@@ -107,7 +129,7 @@ class Cart {
             checkoutButton.outerHTML = `
                 <div>
                     <button id="checkout-button" class="rounded-square-button" onclick="window.suopCart.submitCart()">Checkout</button>
-                    <span>${formatPrice(cartTotal)}</span>
+                    <span class="cart-total" data-value="${cartTotal}">${formatPrice(cartTotal)}</span>
                 </div>
             `
             //todo make the back button take you to whatever prior page.
@@ -118,9 +140,13 @@ class Cart {
             node.addEventListener('mouseenter', () => {
                 if (!node.suopCartShown) {
                     hoverCart = showHoverCart(node)
+                    console.log('entered button')
+
                 }
             })
-            node.addEventListener('mouseleave', () => {
+            node.addEventListener('mouseleave', (e) => {
+                console.log('exited button')
+
                 if (hoverCart) {
                     setTimeout(() => {
                         if (!node.mouseEnteredHoverCart) {
@@ -128,7 +154,7 @@ class Cart {
                             hoverCart = null
                             node.suopCartShown = false
                         }
-                    }, 50)
+                    }, 100)
                 }
             })
         })
@@ -140,7 +166,11 @@ class Cart {
 
     #updateCartNumbers() {
         document.querySelectorAll('.cart-product-number').forEach((node) => {
-            node.innerHTML = this.items.length
+            let length = 0
+            for (let item of this.items) {
+                if (item !== null) length++
+            }
+            node.innerHTML = length
         })
     }
 
@@ -174,6 +204,7 @@ class Cart {
     }
 
     add(cartItem) {
+        SuopSnack.add('Added to cart')
         this.items.push(cartItem)
         this.#updateCartNumbers()
         this.#save()
@@ -182,7 +213,7 @@ class Cart {
     tryRemove(index) {
         if (index >= this.items.length) return false
 
-        this.items.splice(index, 1)
+        this.items[index] = null
         this.#updateCartNumbers()
         this.#save()
         return true

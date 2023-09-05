@@ -15,6 +15,11 @@
   width: 1000px;
   flex-shrink: 1;
 }
+@media (orientation: portrait) {
+  .product-image-grid-wrapper {
+    width: 100%;
+  }
+}
 
 .product-image-grid {
   display: grid;
@@ -59,6 +64,12 @@
   display: flex;
   flex-flow: column;
   align-items: flex-start;
+}
+@media (orientation: portrait) {
+  .product-info {
+    width: 100%;
+    padding: 10px;
+  }
 }
 .product-info > h1 {
   letter-spacing: -1.5px;

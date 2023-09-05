@@ -2,6 +2,7 @@
 @using SuopCommerce.Models
 @model ProductModel
 @{
+        ViewData["Title"] = Model.product.Name;
 }
 <link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
 <script src="/js/product.js" asp-append-version="true"></script>
@@ -47,10 +48,10 @@
                         <b>@extra.Text</b><br>
                         if(extra.Cost != 0)
                         {
-                             <span>(+$@Model.FormatMoney(extra.Cost) per letter)</span><br>
+                             <span>(+$@Model.FormatMoney(extra.Cost) per letter, @extra.freeLetters free letter@(extra.freeLetters == 1 ? "" : "s"))</span><br>
                         }
 
-                        <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost)" />
+                        <input type="text" value="" oninput="window.suopProduct.setPerLetter(this.value, `@extra.Id`, @extra.Cost, @extra.freeLetters)" />
                         break;
 
                     case Extras.Types.TextField:
@@ -61,7 +62,7 @@
                                     content: "@extra.HintText";
                                 }
                             </style>
-                            <span id="@extra.Id" contenteditable="true" class="extra-text-field" oninput="window.suopProduct.customization.set(`@extra.Id`, this.innerHTML)"></span>
+                            <span id="@extra.Id" contenteditable="true" class="extra-text-field" oninput="window.suopProduct.customization.set(`@extra.Id`, this.innerText)"></span>
                             break;
 
                     case Extras.Types.Radio:
@@ -139,7 +140,7 @@
         }
 
         <h1 id="final-price" class="">$@Model.FormatMoney(Model.product.Price)</h1>
-        <button class="rounded-square-button" onclick="window.suopProduct.addToCart()">Buy now</button>
+        <button class="rounded-square-button" onclick="window.suopProduct.addToCart(); this.innerHTML = 'Added to cart'; this.disabled = true; this.style.backgroundColor = 'grey'; this.style.cursor = 'auto'">Buy now</button>
 
         <script defer>
             addEventListener('DOMContentLoaded', () => {

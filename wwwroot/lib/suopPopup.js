@@ -180,8 +180,8 @@ class SuopPopup {
         this.node.addEventListener('mousedown', (e) => {
             this.node.lastMouseDownTarget = e.target
         })
-        this.node.onclick = (e) => {
-            if (e.target.id == this.id) {
+        this.node.addEventListener('mouseup', (e) => {
+            if (e.target.id == this.id && e.target.id == this.node.lastMouseDownTarget.id) {
                 if (this.#options.floating) {
                     return
                 }
@@ -191,7 +191,7 @@ class SuopPopup {
                     this.killPopup()
                 }
             }
-        }
+        })
         return this.node
     }
 

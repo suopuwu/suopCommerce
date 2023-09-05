@@ -10,7 +10,7 @@ namespace SuopCommerce.Pages
         public double totalPrice = 0;
         public async Task OnGetAsync()
         {
-            cartItems = JsonConvert.DeserializeObject<CartItem[]>(Request?.Cookies["cart"] ?? "[]") ?? Array.Empty<CartItem>();
+            cartItems = JsonConvert.DeserializeObject<CartItem[]>(Request?.Cookies["cart"] ?? "[]")?.Where(item => item != null).ToArray() ?? Array.Empty<CartItem>();
             foreach(var item in cartItems)
             {
                 //if performance is a problem, refactor so this part doesn't run twice. (one in here, one in the cshtml file)

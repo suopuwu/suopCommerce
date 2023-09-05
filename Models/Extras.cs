@@ -22,7 +22,8 @@ namespace SuopCommerce.Models
             string Id = "",
             double Cost = 0,
             string HintText = "",
-            Dictionary<string, double>? RadioOptions = null
+            Dictionary<string, double>? RadioOptions = null,
+            int freeLetters = 0
             );
 
         public static Extra ParseExtra(string extraString)
@@ -37,9 +38,9 @@ namespace SuopCommerce.Models
 
                 switch (parts[0].ToLower())
                 {
-                    case "per letter"://per letter::<id>::<display text>::<cost per letter>
-                        validateExtraSections(parts, 4);
-                        return new Extra(Type: Types.PerLetter, Id: parts[1], Text:parts[2], Cost: Double.Parse(parts[3]));
+                    case "per letter"://per letter::<id>::<display text>::<cost per letter>::<free letters>
+                        validateExtraSections(parts, 5);
+                        return new Extra(Type: Types.PerLetter, Id: parts[1], Text:parts[2], Cost: Double.Parse(parts[3]), freeLetters: int.Parse(parts[4]));
                     case "text field"://text field::<id>::<display text>::<hint text>
                         validateExtraSections(parts, 4);
                         return new Extra(Type: Types.TextField, Id: parts[1], Text: parts[2], HintText: parts[3]);

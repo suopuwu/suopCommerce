@@ -3,6 +3,7 @@
 @model AdminModel
 @using SuopCommerce.Utils;
 @{
+    ViewData["Title"] = "Admin";
 }
 
 @if(Request.Cookies["admin-password"] != null && AuthenticationUtil.IsAdmin(Request.Cookies["admin-password"]!))
@@ -24,6 +25,10 @@
         <div>
             <input type="checkbox" id="delete-product-images-checkbox" />
             Delete images when the associated product is deleted.
+        </div>
+        <div>
+            <input type="checkbox" id="refresh-page-checkbox" checked />
+            Refresh the page on edits as necessary.
         </div>
 
     </div>

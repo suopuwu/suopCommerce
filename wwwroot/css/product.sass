@@ -16,6 +16,8 @@ $image-max-width: 350px
   gap: $padding
   width: $text-width * 2
   flex-shrink: 1
+  @media (orientation: portrait)
+    width: 100%
 
 .product-image-grid
   display: grid
@@ -55,6 +57,9 @@ $image-max-width: 350px
   display: flex
   flex-flow: column
   align-items: flex-start
+  @media (orientation: portrait)
+    width: 100%
+    padding: 10px
   > h1
     letter-spacing: -1.5px
 .product-description

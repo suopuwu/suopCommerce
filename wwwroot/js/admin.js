@@ -20,6 +20,10 @@ function retrieveSetting(name) {
             return document.getElementById('delete-product-images-checkbox')
                 .checked
             break
+        case 'refresh-page':
+            return document.getElementById('refresh-page-checkbox')
+                .checked
+            break
         default:
             return false
     }
@@ -160,7 +164,7 @@ function popupForm(mode, data = {}) {
                 To make an extra, simply use one of the formats specified below. One extra per line, they are separated by newlines.
 
                 <br>
-                per letter::id::display text::cost per letter
+                per letter::id::display text::cost per letter::free letters
                 <br>
                 text field::id::display text::hint text
                 <br>
@@ -258,6 +262,8 @@ function popupForm(mode, data = {}) {
     function handleResponse(response) {
         switch (mode) {
             case formModes.uploadImage:
+                if (retrieveSetting('refresh-page')) window.location = window.location
+
                 infoSnackbar.text = `Successfully uploaded ${
                     response.data.length
                 } image${
@@ -271,6 +277,8 @@ function popupForm(mode, data = {}) {
                 )
                 break
             case formModes.createProduct:
+                if (retrieveSetting('refresh-page')) window.location = window.location
+
                 infoSnackbar.text = `Successfully created product. Refresh to see changes.`
                 infoSnackbar.setAction(
                     new SuopSnack.Action(
@@ -280,6 +288,8 @@ function popupForm(mode, data = {}) {
                 )
                 break
             case formModes.editProduct:
+                if (retrieveSetting('refresh-page')) window.location = window.location
+
                 infoSnackbar.text = `Successfully edited product. Refresh to see changes.`
                 infoSnackbar.setAction(
                     new SuopSnack.Action(

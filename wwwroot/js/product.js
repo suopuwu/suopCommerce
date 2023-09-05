@@ -26,9 +26,11 @@ addEventListener('DOMContentLoaded', () => {
             this.refreshPrice()
         },
         //todo make selected addons more obvious
-        setPerLetter(text, id, cost) {
+        setPerLetter(text, id, cost, freeLetters) {
+            console.log(freeLetters)
             this.customization.set(id, text)
-            this.priceModifiers.set(id, cost * text.length)
+            this.priceModifiers.set(id, cost * Math.max(text.length - freeLetters, 0))
+            console.log(Math.max(text.length - freeLetters, 0))
             this.refreshPrice()
 
         },
